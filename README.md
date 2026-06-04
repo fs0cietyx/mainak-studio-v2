@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# Mainak Biswas | Creative Technologist & AI/ML Engineer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div align="left">
+  <img src="https://img.shields.io/badge/Google-Student%20Ambassador-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/KIIT%20University-B.Tech%20AI%2FML-FF9900?style=for-the-badge&logo=gitbook&logoColor=white" />
+  <img src="https://img.shields.io/badge/Security-Zero%20Trust-000000?style=for-the-badge&logo=checkmarx&logoColor=white" />
+</div>
 
-Currently, two official plugins are available:
+### **Architecting Neural Systems. Directing Cinematic Visions.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Creative Technologist bridging the gap between **high-dimensional neural architectures** and **high-fidelity cinematic experiences**. Currently an AI/ML sophomore at **KIIT University** and an official **Google Student Ambassador**, I engineer production-ready intelligence systems while crafting immersive digital narratives. My work is defined by the intersection of rigorous backend logic and premium aesthetic execution.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### **Engineering Excellence (Metrics of Impact)**
+*   **Performance:** Achieved **88% reduction** in media payload (15MB → 1.7MB) via a custom [[FFmpeg]] pipeline without aesthetic degradation.
+*   **Security:** 100% compliance with [[Zero-Trust Security]] principles, featuring hardened [[CSP]], [[HSTS]], and anti-clickjacking headers.
+*   **Latency:** Optimized for [[LCP]] < 1.2s through advanced dual-asset poster framing and edge-delivery via [[Netlify]].
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### **Featured Artifacts**
+| Artifact | Category | Tech Stack |
+| :--- | :--- | :--- |
+| **Neural Cine-Synthesizer** | AI / Visuals | `TensorFlow` • `React` • `FFmpeg` |
+| **Ambassador Hub** | Leadership | `Community Growth` • `Google AI` |
+| **The Imagination Engine** | LLM / GenArt | `GPT-4` • `Stable Diffusion` • `Node.js` |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### **Dual-Core Competencies**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| AI/ML & Systems Engineering | Digital Experience & Design |
+| :--- | :--- |
+| **Neural Architectures:** Designing and fine-tuning LLMs and computer vision pipelines using TensorFlow and PyTorch. | **Cinematic Storytelling:** Directing visual narratives with a focus on motion aesthetics, pacing, and emotional resonance. |
+| **Systems Depth:** Low-level expertise in C++, Java, and CPU scheduling logic; building robust healthcare and voice-AI bots. | **Interface Engineering:** Implementing high-performance UI/UX using React 19, Next.js, and Framer Motion. |
+| **Data Pipelines:** Architecting normalized SQL/PostgreSQL schemas and high-throughput data ingestion layers. | **Brand Design:** Crafting digital identities inspired by urban minimalism and modern architectural principles. |
+
+---
+
+### **Deployment Architecture**
+```mermaid
+graph LR
+  A[GitHub Repo] -->|CI/CD| B(Netlify Edge)
+  B --> C{Security Shield}
+  C --> D[HSTS / CSP]
+  C --> E[X-Frame-Options]
+  B --> F[Localized Assets]
+  F --> G[Optimized MP4/WebP]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### **Production Tech Stack**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+#### 🧠 **Intelligence & Core Systems**
+`Python` • `C++` • `Java` • `SQL` • `TensorFlow` • `PyTorch` • `FastAPI` • `Node.js` • `PostgreSQL`
+
+#### 🔗 **Interaction & Interface**
+`React 19` • `Next.js` • `TypeScript` • `Tailwind CSS` • `Framer Motion` • `Vite` • `Figma`
+
+#### 🎬 **Visual Production**
+`DaVinci Resolve` • `Adobe Premiere Pro` • `Cinematography` • `Motion Graphics`
+
+---
+
+### **AppSec & DevSecOps Posture**
+I treat the browser as a hostile environment. Every artifact I deploy adheres to enterprise-grade security standards:
+- **Secrets Management:** 100% isolation of sensitive identifiers via server-side `.env` injection.
+- **Input Sanitization:** Aggressive regex-based filtering to neutralize **XSS** and reflected injections in terminal emulators.
+- **Infrastructure:** Production branch locking and edge-level header enforcement.
+
+---
+
+### **Professional Inquiries**
+<div align="left">
+  <a href="https://mainakstudio.netlify.app/"><strong>Live Portfolio</strong></a> • 
+  <a href="mailto:mainakbiswas22@gmail.com"><strong>Email</strong></a> • 
+  <a href="https://www.linkedin.com/in/mainak-biswas-00b8b22b1/"><strong>LinkedIn</strong></a>
+</div>
+
+---
+*Generated by the Genesis Node | Secure. Optimized. Cinematic.*
