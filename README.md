@@ -1,83 +1,107 @@
-# Mainak Biswas | Creative Technologist & AI/ML Engineer
+# Artifact Engine v2.0.45: Technical Specification
+
+A high-performance, **[[Zero-Trust Security]]** landing page architecture engineered for the low-latency delivery of cinematic digital artifacts. This project serves as a production-grade demonstration of **[[Asset Sovereignty]]**, **[[AppSec]]** hardening, and **[[Web Performance]]** optimization.
 
 <div align="left">
-  <img src="https://img.shields.io/badge/Google-Student%20Ambassador-4285F4?style=for-the-badge&logo=google&logoColor=white" />
-  <img src="https://img.shields.io/badge/KIIT%20University-B.Tech%20AI%2FML-FF9900?style=for-the-badge&logo=gitbook&logoColor=white" />
-  <img src="https://img.shields.io/badge/Security-Zero%20Trust-000000?style=for-the-badge&logo=checkmarx&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-19.2.6-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Vite-8.0.12-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-6.0.2-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Netlify-Edge-00AD9F?style=for-the-badge&logo=netlify&logoColor=white" />
 </div>
 
-### **Architecting Neural Systems. Directing Cinematic Visions.**
+---
 
-Creative Technologist bridging the gap between **high-dimensional neural architectures** and **high-fidelity cinematic experiences**. Currently an AI/ML sophomore at **KIIT University** and an official **Google Student Ambassador**, I engineer production-ready intelligence systems while crafting immersive digital narratives. My work is defined by the intersection of rigorous backend logic and premium aesthetic execution.
+## 🏗️ 1. Core System Architecture
+
+The engine is architected as a **[[Single Page Application]] (SPA)** built on **[[React]] 19** and bundled via **[[Vite]]**. The architecture prioritizes a minimal main-thread footprint and aggressive asset optimization.
+
+### **Building & Tooling**
+*   **[[Vite]] (v8.0.12):** Utilized as the build engine for its native [[ESM]]-based Hot Module Replacement (HMR) and multi-stage Rollup-based bundling.
+*   **[[TypeScript]] (v6.0.2):** Enforces strict type-safety across all components, specifically for the Terminal's command-routing logic and animation variants.
+*   **[[ESLint]] (v10.3.0):** Integrated with `typescript-eslint` to enforce code quality and prevent memory leaks in custom hooks.
 
 ---
 
-### **Engineering Excellence (Metrics of Impact)**
-*   **Performance:** Achieved **88% reduction** in media payload (15MB → 1.7MB) via a custom [[FFmpeg]] pipeline without aesthetic degradation.
-*   **Security:** 100% compliance with [[Zero-Trust Security]] principles, featuring hardened [[CSP]], [[HSTS]], and anti-clickjacking headers.
-*   **Latency:** Optimized for [[LCP]] < 1.2s through advanced dual-asset poster framing and edge-delivery via [[Netlify]].
+## 🎨 2. Creative Engineering & Motion
+
+The visual layer fuses high-end cinematography with hardware-accelerated UI interactions.
+
+### **Animation Layer: [[Framer Motion]] (v12.40.0)**
+*   **Declarative Motion:** Implements `AnimatePresence` for lifecycle-managed transitions in the Terminal modal.
+*   **Scroll-Linked Typo:** The `AnimatedTextReveal` component uses `useScroll` and `useTransform` to map scroll progress directly to character opacity, creating a cinematic reading experience.
+*   **Performance:** All animations are offloaded to the GPU using CSS `transform` and `opacity` properties to prevent layout shifts.
+
+### **Styling Layer: [[Tailwind CSS]] (v3.4.19)**
+*   **Custom Design System:** Configured via `tailwind.config.js` to implement a zero-saturation palette (`#E1E0CC`, `#212121`).
+*   **Atmospheric Overlays:** Implements a custom **Noise Grain Overlay** using a low-opacity fixed-position background and a `mix-blend-overlay` filter to unify video and UI elements.
 
 ---
 
-### **Featured Artifacts**
-| Artifact | Category | Tech Stack |
-| :--- | :--- | :--- |
-| **Neural Cine-Synthesizer** | AI / Visuals | `TensorFlow` • `React` • `FFmpeg` |
-| **Ambassador Hub** | Leadership | `Community Growth` • `Google AI` |
-| **The Imagination Engine** | LLM / GenArt | `GPT-4` • `Stable Diffusion` • `Node.js` |
+## 🛡️ 3. Security & AppSec Hardening
+
+Adhering to a **[[Zero-Trust Security]]** model, the project implements multi-layered protection against common web vulnerabilities.
+
+### **Pillar 4: Input Sanitization & XSS Prevention**
+The `Terminal.tsx` component handles user input through an aggressive, whitelist-only regex filter:
+```typescript
+const sanitizedInput = input.trim().slice(0, 100).replace(/[^\w\s\.\-]/gi, '');
+```
+This sanitization occurs before state updates, neutralizing **Reflected XSS** and injection attempts.
+
+### **Pillar 5: PII Obfuscation & Anti-Scraping**
+*   **[[Base64]] Encoding:** Sensitive contact identifiers are stored as encoded strings in `.env` variables.
+*   **Secure Decoding:** The `utils/security.ts` module decodes identifiers only upon user interaction (e.g., `sudo connect`), preventing automated bots from harvesting emails from the DOM.
+
+### **Pillar 6: Production Security Headers**
+Configured via `[[netlify.toml]]`, the edge network enforces:
+*   **[[CSP]] (Content Security Policy):** Restricts `script-src` and `object-src` to `'self'`, mitigating data exfiltration.
+*   **[[HSTS]]:** Mandatory HTTPS for one year.
+*   **X-Frame-Options:** Set to `DENY` to prevent UI Redressing (Clickjacking).
+*   **X-Content-Type-Options:** `nosniff` prevents MIME-type sniffing.
 
 ---
 
-### **Dual-Core Competencies**
+## ⚡ 4. [[Cinematic Performance Optimization]]
 
-| AI/ML & Systems Engineering | Digital Experience & Design |
-| :--- | :--- |
-| **Neural Architectures:** Designing and fine-tuning LLMs and computer vision pipelines using TensorFlow and PyTorch. | **Cinematic Storytelling:** Directing visual narratives with a focus on motion aesthetics, pacing, and emotional resonance. |
-| **Systems Depth:** Low-level expertise in C++, Java, and CPU scheduling logic; building robust healthcare and voice-AI bots. | **Interface Engineering:** Implementing high-performance UI/UX using React 19, Next.js, and Framer Motion. |
-| **Data Pipelines:** Architecting normalized SQL/PostgreSQL schemas and high-throughput data ingestion layers. | **Brand Design:** Crafting digital identities inspired by urban minimalism and modern architectural principles. |
+To deliver a high-end visual experience without the typical 40MB+ payload of video-heavy sites, a custom optimization pipeline was established.
+
+### **[[Asset Sovereignty]] & Media Pipeline**
+*   **[[FFmpeg]] Optimization:** All MP4 artifacts undergo a multi-pass compression:
+    *   **Codec:** `libx264` with **CRF 24-28**.
+    - **Audio Striping:** `-an` flag removes audio tracks to reduce byte size for background loops.
+*   **LCP Buffer Strategy:** Each video element utilizes a high-resolution `poster` frame (WebP/JPG) and the `playsinline` attribute to ensure the Largest Contentful Paint (LCP) triggers sub-1.2s.
+*   **Localized Hosting:** Assets are served from the same [[Netlify]] Edge nodes as the code, eliminating third-party DNS lookups and TLS handshakes.
 
 ---
 
-### **Deployment Architecture**
-```mermaid
-graph LR
-  A[GitHub Repo] -->|CI/CD| B(Netlify Edge)
-  B --> C{Security Shield}
-  C --> D[HSTS / CSP]
-  C --> E[X-Frame-Options]
-  B --> F[Localized Assets]
-  F --> G[Optimized MP4/WebP]
+## 🚀 5. Deployment & CI/CD
+
+*   **Platform:** [[Netlify]] Edge Network.
+*   **Workflow:** Git-driven Continuous Integration.
+*   **Build Script:** `npm run build` (executes `tsc -b && vite build`).
+*   **Redirection:** Implements a single-page redirect rule (`/* /index.html 200`) to handle client-side routing on the edge.
+
+---
+
+## 💻 6. Local Development
+
+### **Environmental Setup**
+The engine requires the following environment variables (defined in `.env`):
+```text
+VITE_HERO_VIDEO_URL=/hero-video.mp4
+VITE_FEATURE_1_ICON=/feature-1.webp
+VITE_FEATURE_2_ICON=/feature-2.webp
+VITE_FEATURE_3_ICON=/feature-3.webp
+VITE_CONTACT_EMAIL_B64=base64_encoded_string
+```
+
+### **Execution Commands**
+```bash
+npm install        # Dependency Ingestion
+npm run dev        # Hot Module Replacement Environment
+npm run build      # Production Chunk Generation
 ```
 
 ---
-
-### **Production Tech Stack**
-
-#### 🧠 **Intelligence & Core Systems**
-`Python` • `C++` • `Java` • `SQL` • `TensorFlow` • `PyTorch` • `FastAPI` • `Node.js` • `PostgreSQL`
-
-#### 🔗 **Interaction & Interface**
-`React 19` • `Next.js` • `TypeScript` • `Tailwind CSS` • `Framer Motion` • `Vite` • `Figma`
-
-#### 🎬 **Visual Production**
-`DaVinci Resolve` • `Adobe Premiere Pro` • `Cinematography` • `Motion Graphics`
-
----
-
-### **AppSec & DevSecOps Posture**
-I treat the browser as a hostile environment. Every artifact I deploy adheres to enterprise-grade security standards:
-- **Secrets Management:** 100% isolation of sensitive identifiers via server-side `.env` injection.
-- **Input Sanitization:** Aggressive regex-based filtering to neutralize **XSS** and reflected injections in terminal emulators.
-- **Infrastructure:** Production branch locking and edge-level header enforcement.
-
----
-
-### **Professional Inquiries**
-<div align="left">
-  <a href="https://mainakstudio.netlify.app/"><strong>Live Portfolio</strong></a> • 
-  <a href="mailto:mainakbiswas22@gmail.com"><strong>Email</strong></a> • 
-  <a href="https://www.linkedin.com/in/mainak-biswas-00b8b22b1/"><strong>LinkedIn</strong></a>
-</div>
-
----
+*Status: [[STATUS]] | Evolution: [[PROGRESS]] | Design: [[DECISIONS]]*
 *Generated by the Genesis Node | Secure. Optimized. Cinematic.*
