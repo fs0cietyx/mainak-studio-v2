@@ -1,17 +1,32 @@
-# 🖥️ Mainak-OS: Cinematic Portfolio Experience
+# 🖥️ Mainak Biswas: Portfolio & Engineering Showcases
 
 [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF.svg)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-18.0-61DAFB.svg)](https://reactjs.org/)
 [![Framer Motion](https://img.shields.io/badge/Motion-Framer-FF0055.svg)](https://www.framer.com/motion/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC.svg)](https://tailwindcss.com/)
 
-> **A high-performance, GPU-accelerated digital ecosystem designed to showcase the technical expertise and creative milestones of Mainak Biswas.**
+> **A high-performance, cinematic digital portfolio designed to showcase the strategic AI engineering and creative milestones of Mainak Biswas.**
+
+---
+
+## ✨ Visual Experience
+
+![Desktop Interface](public/snapshots/desktop.png)
+*Figure 1: Cinematic desktop metaphor featuring draggable project windows and glassmorphism effects.*
+
+<p align="center">
+  <img src="public/snapshots/terminal.png" width="45%" alt="Secure Terminal" />
+  <img src="public/snapshots/projects.png" width="45%" alt="Project Showcase" />
+</p>
+<p align="center">
+  <em>Figure 2: Left: Integrated secure terminal system. Right: High-fidelity project artifact exploration.</em>
+</p>
 
 ---
 
 ## 🌟 Overview
 
-**Mainak-OS** is a sophisticated "Creative Technologist" identity hub. Engineered with a focus on cinematic aesthetics and fluid motion, it provides a unique macOS-inspired desktop experience where users can interact with draggable windows, explore high-fidelity projects, and view a validated history of engineering achievements.
+This platform is a sophisticated identity hub for a **Creative Technologist**. Engineered with a focus on cinematic aesthetics and fluid motion, it provides a unique desktop experience where users can interact with draggable windows, explore high-fidelity projects, and view a validated history of engineering achievements.
 
 ---
 
@@ -34,8 +49,8 @@ The application is built on a modular React architecture, utilizing spring-based
 
 ```mermaid
 graph TD
-    A[User Entry] --> B[OS Bootloader]
-    B --> C{Mainak OS Desktop}
+    A[User Entry] --> B[System Bootloader]
+    B --> C{Interactive Portfolio Desktop}
     subgraph "Interactive Layers"
     C --> D[Draggable Windows]
     C --> E[Terminal Component]
@@ -61,11 +76,6 @@ graph TD
 | **Styling** | TailwindCSS, PostCSS |
 | **Security** | Strategic Frontend Protocol, PII Encoding |
 | **Deployment** | Netlify (Automated CI/CD) |
-
-### Key Aesthetic Features
-*   **Glassmorphism:** High-contrast lighting and frost-glass blurs for a premium experience.
-*   **Tactile Physics:** Draggable windows with realistic spring-based transitions.
-*   **Interactive Terminal:** A fully functional, sanitized command-line interface for exploratory navigation.
 
 ---
 
