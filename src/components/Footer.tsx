@@ -28,7 +28,7 @@ export const Footer = () => {
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
                 <User size={18} />
               </a>
-              <a href={`mailto:${email}`} className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
+              <a href={`mailto:${email}?subject=General%20Inquiry`} className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
                 <Mail size={18} />
               </a>
             </div>
@@ -52,8 +52,8 @@ export const Footer = () => {
           <div>
             <h4 className="text-[#E1E0CC] font-medium mb-6 uppercase tracking-widest text-[10px]">Inquiries</h4>
             <p className="text-gray-500 text-sm mb-4">Interested in collaborating on AI or cinematic projects?</p>
-            <a href={`mailto:${email}`} className="text-primary hover:underline text-sm font-medium">
-              Connect
+            <a href={`mailto:${email}?subject=Collaboration%20Inquiry`} className="text-primary hover:underline text-sm font-medium break-all">
+              {email}
             </a>
           </div>
         </div>
