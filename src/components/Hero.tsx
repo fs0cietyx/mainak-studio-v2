@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { WordsPullUp } from './animations';
-import { getSecureEmail } from '../utils/security';
 
 
 
@@ -52,7 +50,6 @@ const CylinderRow = ({ text, href, direction, onClick, isExternal, isDownload }:
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const email: string = getSecureEmail();
 
   return (
     <>
@@ -117,8 +114,6 @@ const Navbar: React.FC = () => {
  * Utilizes GPU-accelerated transforms and optimized video rendering.
  */
 export const Hero: React.FC = () => {
-  const secureEmail: string = getSecureEmail();
-
   return (
     <section className="h-screen w-full p-4 md:p-6 bg-black relative overflow-hidden">
       <div className="w-full h-full rounded-2xl md:rounded-[2.5rem] overflow-hidden relative shadow-2xl">

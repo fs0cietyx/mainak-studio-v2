@@ -2,7 +2,6 @@ import React, { useEffect, Suspense } from 'react';
 import Lenis from 'lenis';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
-import { Features } from './components/Features';
 import { Footer } from './components/Footer';
 import { Terminal } from './components/Terminal';
 import { Certificates } from './components/Certificates';

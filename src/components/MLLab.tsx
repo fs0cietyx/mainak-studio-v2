@@ -31,9 +31,6 @@ export const MLLab: React.FC = () => {
     target: containerRef,
     offset: ['start end', 'end start']
   });
-
-  const headerOpacity = useTransform(scrollYProgress, [0.2, 0.3, 0.4, 0.5], [0, 1, 1, 0]);
-  const headerY = useTransform(scrollYProgress, [0.2, 0.3, 0.4, 0.5], [50, 0, 0, -50]);
   
   const textX = useTransform(scrollYProgress, [0, 0.35], ["-50vw", "100vw"]);
   const gifX = useTransform(scrollYProgress, [0, 0.35], ["100vw", "0vw"]);
