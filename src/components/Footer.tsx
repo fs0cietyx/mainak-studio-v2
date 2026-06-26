@@ -1,76 +1,85 @@
-import { motion } from 'framer-motion';
-import { Camera, Mail, Globe, User, ArrowUp } from 'lucide-react';
-import { getSecureEmail } from '../utils/security';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUp } from 'lucide-react';
+
+const socials = [
+  { platform: "Instagram", handle: "fushigurp", link: "https://www.instagram.com/fushigurp" },
+  { platform: "GitHub", handle: "fs0cietyx", link: "https://github.com/fs0cietyx" },
+  { platform: "Email", handle: "mainakbiswas22", link: "mailto:mainakbiswas22@gmail.com" }
+];
 
 export const Footer = () => {
-  const email = getSecureEmail();
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["50vh", "-70vh"]);
+
   return (
-    <footer className="bg-black py-20 px-6 border-t border-[#E1E0CC]/10">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
-          {/* Brand/Logo Section */}
-          <div className="lg:col-span-2">
-            <h2 className="text-[#E1E0CC] text-3xl font-medium tracking-tight mb-6">Mainak Biswas</h2>
-            <p className="text-gray-500 max-w-sm text-sm leading-relaxed mb-8">
-              Creative Technologist & AI Engineer. Bridging the gap between neural intelligence and cinematic imagination.
-            </p>
-            <div className="flex gap-4">
-              <a href="https://www.instagram.com/fushigurp" target="_blank" rel="noopener noreferrer" className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
-                <Camera size={18} />
-              </a>
-              <a href="https://github.com/fs0cietyx" target="_blank" rel="noopener noreferrer" className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
-                <Globe size={18} />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
-                <User size={18} />
-              </a>
-              <a href={`mailto:${email}?subject=General%20Inquiry`} className="bg-[#1A1A1A] p-3 rounded-full text-gray-400 hover:text-primary hover:bg-[#252525] transition-all">
-                <Mail size={18} />
-              </a>
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <div>
-            <h4 className="text-[#E1E0CC] font-medium mb-6 uppercase tracking-widest text-[10px]">Navigation</h4>
-            <ul className="space-y-4">
-              {["Hero", "About", "Focus", "Projects"].map((item) => (
-                <li key={item}>
-                  <a href={`#${item.toLowerCase()}`} className="text-gray-500 hover:text-[#E1E0CC] text-sm transition-colors uppercase tracking-wider text-[11px]">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Inquiries Section */}
-          <div>
-            <h4 className="text-[#E1E0CC] font-medium mb-6 uppercase tracking-widest text-[10px]">Inquiries</h4>
-            <p className="text-gray-500 text-sm mb-4">Interested in collaborating on AI or cinematic projects?</p>
-            <a href={`mailto:${email}?subject=Collaboration%20Inquiry`} className="text-primary hover:underline text-sm font-medium break-all">
-              {email}
-            </a>
-          </div>
+    <footer ref={containerRef} className="relative w-full h-[200vh] bg-[#E1E0CC] text-black border-t border-black/10">
+      {/* Background Noise for Texture */}
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      
+      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between">
+        
+        {/* Stationary Center @ */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-20">
+          <span className="text-[5.5vw] md:text-[4vw] font-mono leading-none text-black tracking-tighter" style={{ willChange: "transform" }}>
+            @
+          </span>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-10 border-t border-[#E1E0CC]/5 gap-6">
-          <p className="text-gray-600 text-[10px] uppercase tracking-[0.2em]">
+        {/* Scrolling Social List */}
+        <motion.div style={{ y, willChange: "transform", translateZ: 0 }} className="absolute w-full flex flex-col items-center z-10 top-1/2 -translate-y-1/2 pt-[20vh]">
+          {socials.map((social, i) => (
+            <a 
+              key={i} 
+              href={social.link} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="flex w-full items-center justify-center py-4 md:py-6 group cursor-pointer hover:opacity-50 transition-opacity duration-300"
+            >
+              {/* Left Side: Platform */}
+              <div className="flex-1 flex justify-end">
+                <span className="text-[5.5vw] md:text-[4vw] font-mono uppercase tracking-tighter leading-none group-hover:italic transition-all duration-300">
+                  {social.platform}
+                </span>
+              </div>
+              
+              {/* Ultra-tight center gap perfectly matched to @ width in mono font */}
+              <div className="w-[5.5vw] md:w-[4vw]" />
+
+              {/* Right Side: Handle */}
+              <div className="flex-1 flex justify-start">
+                <span className="text-[5.5vw] md:text-[4vw] font-mono tracking-tighter leading-none whitespace-nowrap">
+                  {social.handle}
+                </span>
+              </div>
+            </a>
+          ))}
+        </motion.div>
+
+        {/* Bottom Bar attached to sticky container */}
+        <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-6 px-6 pb-8 z-30 pointer-events-auto">
+          <p className="text-black/60 text-[10px] font-bold uppercase tracking-[0.2em]">
             © 2026 Mainak Biswas. All Rights Reserved.
           </p>
           <motion.button
             whileHover={{ y: -5 }}
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors text-[10px] uppercase tracking-widest"
+            className="flex items-center gap-2 text-black/60 hover:text-black transition-colors text-[10px] font-bold uppercase tracking-[0.2em]"
           >
-            Back to Top <ArrowUp size={14} />
+            Back to Top <ArrowUp size={14} strokeWidth={3} />
           </motion.button>
         </div>
+
       </div>
     </footer>
   );

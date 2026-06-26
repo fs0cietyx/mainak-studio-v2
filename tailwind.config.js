@@ -10,8 +10,10 @@ export default {
         primary: "#DEDBC8",
       },
       fontFamily: {
-        sans: ['Almarai', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'sans-serif'],
+        sans: ['"Geist Mono"', '"IBM Plex Mono"', '"Fragment Mono"', 'monospace'],
         serif: ['"Instrument Serif"', 'serif'],
+        mono: ['"Geist Mono"', '"IBM Plex Mono"', '"Fragment Mono"', 'monospace'],
+        display: ['"Space Grotesk"', '"Clash Display"', 'sans-serif'],
       },
     },
   },

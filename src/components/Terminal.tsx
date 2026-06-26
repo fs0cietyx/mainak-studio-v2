@@ -73,18 +73,18 @@ export const Terminal: React.FC = () => {
         output = (
           <div className="flex flex-col gap-1">
             <span className="text-primary font-bold">Selected Artifacts:</span>
-            <span>- Neural Cine-Synthesizer (AI / Visual)</span>
-            <span>- Ambassador Hub (Leadership)</span>
+            <span>- CytoGraph ML (AI / Machine Learning)</span>
+            <span>- Maze Crawler (Algorithms / Pathfinding)</span>
             <span>- AI Slop Detector (AI Governance / NLP)</span>
-            <span>- The Imagination Engine (LLM / GenArt)</span>
+            <span>- Semantic Repo Mapper (AST / Code Analysis)</span>
           </div>
         );
         break;
       case 'whoami':
-        output = 'User: Mainak Biswas\nStatus: Google Student Ambassador\nOrigin: KIIT University (Sophomore)\nFocus: AI/ML Engineering & Cinematic Visuals';
+        output = 'User: Mainak Biswas\nRole: Creative Technologist\nStatus: Engineer & Designer\nFocus: Cinematic Web Experiences & AI Architecture';
         break;
       case 'cat about.txt':
-        output = 'I am a Creative Technologist bridging AI/ML engineering with the power of visual storytelling. By leveraging my technical foundation at KIIT and my leadership as a Google Student Ambassador, I build intelligent software solutions while crafting cinematic narratives.';
+        output = 'I am Mainak Biswas, a Creative Technologist. I bridge the gap between heavy engineering and high-end aesthetic design. Less "beep boop," way more "oh la la."';
         break;
       case 'sudo connect':
         output = 'Initializing secure connection relay... Authentication bypassed for system owner.';
