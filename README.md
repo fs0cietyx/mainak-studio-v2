@@ -10,6 +10,21 @@
 
 ---
 
+## ✨ Visual Experience
+
+![Hero Section](public/snapshots/hero_new.png)
+*Figure 1: The new minimalist, high-end hero section featuring cinematic scroll physics.*
+
+<p align="center">
+  <img src="public/snapshots/mllab_new.png" width="45%" alt="MNIST Sandbox" />
+  <img src="public/snapshots/sculpture_new.png" width="45%" alt="Interactive Sculpture" />
+</p>
+<p align="center">
+  <em>Figure 2: Left: The native JS ML Sandbox. Right: The massive 3D Interactive Sculpture.</em>
+</p>
+
+---
+
 ## 🌟 Overview
 
 This platform serves as the digital identity for **Mainak Biswas**, a Creative Technologist and AI/ML Engineer. It is not a standard web page; it is a meticulously engineered interactive experience designed to demonstrate expertise in bleeding-edge web technologies, real-time 3D rendering, and applied machine learning.
