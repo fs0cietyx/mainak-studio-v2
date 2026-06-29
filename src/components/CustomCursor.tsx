@@ -282,39 +282,7 @@ export const CustomCursor = () => {
       document.body.style.setProperty('--cursor-size', `${baseSize}px`);
       document.body.style.setProperty('--mask-size', `${maskRadius}px`);
 
-      // Calculate head movement speed for fluid pull physics
-      const headSpeed = speed * 0.15;
-      
-      // Update Liquid Lens Displacement
-      const lensEl = document.getElementById('liquid-lens');
-      if (lensEl) {
-        // Track the head node exactly
-        lensEl.style.transform = `translate3d(${nodes.current[0].x}px, ${nodes.current[0].y}px, 0) translate(-50%, -50%)`;
-      }
-      
-      const velocityMatrix = document.getElementById('velocity-matrix');
-      const pullMap = document.getElementById('pull-map');
-      
-      if (velocityMatrix && pullMap) {
-        // Directional pull: fluid, organic drag
-        const maxOffset = 0.6;
-        const pullFactor = 0.012;
-        // Invert vx/vy because sampling from the opposite direction moves pixels along the velocity vector
-        const offsetX = Math.max(-maxOffset, Math.min(maxOffset, -vx * pullFactor));
-        const offsetY = Math.max(-maxOffset, Math.min(maxOffset, -vy * pullFactor));
-        
-        velocityMatrix.setAttribute('values', `1 0 0 0 ${offsetX}  0 1 0 0 ${offsetY}  0 0 1 0 0  0 0 0 1 0`);
-        
-        // Liquid effect: zero motion when still, strongly viscous when moving
-        const baseScale = 0; // "wont move" when still
-        const dynamicScale = Math.min(headSpeed * 1.5, 60); // viscous pull when moving
-        
-        const currentScale = parseFloat(pullMap.getAttribute('scale') || '0');
-        const newScale = currentScale + ((baseScale + dynamicScale) - currentScale) * 0.2;
-        pullMap.setAttribute('scale', newScale.toString());
-      }
-
-
+      // No displacement map update needed anymore
 
       // 8. Render Canvas (IK Metaball Engine) - EXTREME CPU OPTIMIZATION
       if (currentBlobSize.current < 0.5 && trailDroplets.current.length === 0) {
@@ -412,69 +380,18 @@ export const CustomCursor = () => {
 
   return (
     <>
-      {/* Liquid Displacement Lens - Warps DOM elements exactly under the cursor without CSS masks */}
-      <div 
-        id="liquid-lens"
-        className="pointer-events-none fixed z-[9997]"
-        style={{
-          width: '300px', 
-          height: '300px',
-          left: 0, top: 0,
-          backdropFilter: 'url(#pull-filter)',
-          WebkitBackdropFilter: 'url(#pull-filter)',
-          willChange: 'transform'
-        }}
-      />
-
       {/* Hidden SVG Filter Definition for the Gooey Metaball effect */}
       <svg className="hidden">
         <defs>
           <filter id="metaball-goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
             <feColorMatrix 
               in="blur" 
               mode="matrix" 
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -5" 
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -12" 
               result="goo" 
             />
-          </filter>
-          
-          {/* Liquid Lens Pull Filter - Internal Radial Masking to prevent double layers */}
-          <filter id="pull-filter" x="0%" y="0%" width="100%" height="100%">
-            {/* 1. Neutral Gray background (zero displacement) */}
-            <feFlood floodColor="#808080" floodOpacity="1" result="gray" />
-            
-            {/* 2. Soft radial mask in the center */}
-            <feFlood floodColor="#ffffff" floodOpacity="1" x="35%" y="35%" width="30%" height="30%" result="centerDot" />
-            <feGaussianBlur in="centerDot" stdDeviation="30" result="mask" />
-            
-            {/* 3. Smooth, organic liquid turbulence */}
-            <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="1" result="noise" />
-            
-            {/* 4. Directional bias injected via React physics loop */}
-            <feColorMatrix 
-              id="velocity-matrix"
-              in="noise" 
-              type="matrix" 
-              values="1 0 0 0 0   0 1 0 0 0   0 0 1 0 0   0 0 0 1 0" 
-              result="biasedNoise" 
-            />
-            
-            {/* 5. Mask the turbulent noise so it fades to transparent at edges */}
-            <feComposite in="biasedNoise" in2="mask" operator="in" result="maskedNoise" />
-            
-            {/* 6. Blend the masked noise over the neutral gray background */}
-            <feComposite in="maskedNoise" in2="gray" operator="over" result="finalMap" />
-            
-            {/* 7. Displace the real DOM using our perfect radial displacement map */}
-            <feDisplacementMap 
-              id="pull-map"
-              in="SourceGraphic" 
-              in2="finalMap" 
-              scale="0" 
-              xChannelSelector="R" 
-              yChannelSelector="G" 
-            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
         </defs>
       </svg>
@@ -485,6 +402,7 @@ export const CustomCursor = () => {
         ref={canvasRef}
         className="pointer-events-none fixed inset-0 z-[9998]"
         style={{
+          mixBlendMode: 'difference',
           width: '100vw',
           height: '100vh',
           filter: 'url(#metaball-goo)'
