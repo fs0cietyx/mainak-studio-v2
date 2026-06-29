@@ -1,28 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-// Cache the noise pattern to avoid creating hundreds of canvases per second
-let cachedNoisePattern: CanvasPattern | null = null;
-const getNoisePattern = (ctx: CanvasRenderingContext2D) => {
-  if (cachedNoisePattern) return cachedNoisePattern;
-  const c = document.createElement('canvas');
-  c.width = 128;
-  c.height = 128;
-  const nCtx = c.getContext('2d');
-  if (nCtx) {
-    const imgData = nCtx.createImageData(128, 128);
-    for (let i = 0; i < imgData.data.length; i += 4) {
-      imgData.data[i] = 0; // Black RGB
-      imgData.data[i+1] = 0;
-      imgData.data[i+2] = 0;
-      // Binary alpha noise (transparent or opaque)
-      imgData.data[i+3] = Math.random() > 0.5 ? 255 : 0;
-    }
-    nCtx.putImageData(imgData, 0, 0);
-    cachedNoisePattern = ctx.createPattern(c, 'repeat');
-  }
-  return cachedNoisePattern;
-};
-
 // A single viscous droplet/node of the biological tail
 class BiologicalNode {
   x: number;
@@ -189,6 +166,8 @@ export const CustomCursor = () => {
         blobTargetSize = 0;
       }
 
+      // Calculate head movement speed for fluid pull physics
+
       // 3. Calculate Head Velocity for Visibility
       const vx = targetX - previousBlob.current.x;
       const vy = targetY - previousBlob.current.y;
@@ -303,6 +282,38 @@ export const CustomCursor = () => {
       document.body.style.setProperty('--cursor-size', `${baseSize}px`);
       document.body.style.setProperty('--mask-size', `${maskRadius}px`);
 
+      // Calculate head movement speed for fluid pull physics
+      const headSpeed = speed * 0.15;
+      
+      // Update Liquid Lens Displacement
+      const lensEl = document.getElementById('liquid-lens');
+      if (lensEl) {
+        // Track the head node exactly
+        lensEl.style.transform = `translate3d(${nodes.current[0].x}px, ${nodes.current[0].y}px, 0) translate(-50%, -50%)`;
+      }
+      
+      const velocityMatrix = document.getElementById('velocity-matrix');
+      const pullMap = document.getElementById('pull-map');
+      
+      if (velocityMatrix && pullMap) {
+        // Directional pull: push pixels in the direction of movement
+        const maxOffset = 0.45;
+        const pullFactor = 0.008;
+        // Invert vx/vy because sampling from the opposite direction moves pixels along the velocity vector
+        const offsetX = Math.max(-maxOffset, Math.min(maxOffset, -vx * pullFactor));
+        const offsetY = Math.max(-maxOffset, Math.min(maxOffset, -vy * pullFactor));
+        
+        velocityMatrix.setAttribute('values', `1 0 0 0 ${offsetX}  0 1 0 0 ${offsetY}  0 0 1 0 0  0 0 0 1 0`);
+        
+        // Keep ripples minimal. Base scale is small, expands slightly on movement
+        const baseScale = 15;
+        const dynamicScale = Math.min(headSpeed * 1.5, 30);
+        
+        const currentScale = parseFloat(pullMap.getAttribute('scale') || '0');
+        const newScale = currentScale + ((baseScale + dynamicScale) - currentScale) * 0.15;
+        pullMap.setAttribute('scale', newScale.toString());
+      }
+
 
 
       // 8. Render Canvas (IK Metaball Engine) - EXTREME CPU OPTIMIZATION
@@ -375,34 +386,6 @@ export const CustomCursor = () => {
             }
           }
           ctx.fill();
-          
-          // Physics-Induced Pixel Abrasion (Internal text glitching)
-          // We draw the noise pattern OVER the white blob using source-atop.
-          // Black pixels in the pattern will stop the 'difference' blend inversion,
-          // creating a glitchy torn pixel effect on the text *inside* the cursor
-          // when moving fast!
-          const pattern = getNoisePattern(ctx);
-          if (pattern) {
-            const headSpeed = speed * 0.15;
-            // Map speed to noise alpha. 
-            // Add a small baseline noise (0.05) so it always feels a bit static.
-            const glitchAlpha = Math.min(Math.pow(headSpeed * 0.1, 1.5) + 0.05, 1);
-            
-            if (glitchAlpha > 0.01) {
-              ctx.globalCompositeOperation = 'source-atop';
-              ctx.globalAlpha = glitchAlpha;
-              ctx.fillStyle = pattern;
-              ctx.save();
-              // Jitter the pattern offset every frame for TV static effect
-              ctx.translate(Math.floor(Math.random() * 128), Math.floor(Math.random() * 128));
-              ctx.fillRect(-128, -128, canvas.width + 128, canvas.height + 128);
-              ctx.restore();
-              
-              // Reset composite state
-              ctx.globalCompositeOperation = 'source-over';
-              ctx.globalAlpha = 1;
-            }
-          }
         }
       }
       }
@@ -429,6 +412,22 @@ export const CustomCursor = () => {
 
   return (
     <>
+      {/* Liquid Displacement Lens - Warps DOM elements behind the cursor directionally */}
+      <div 
+        id="liquid-lens"
+        className="pointer-events-none fixed z-[9997]"
+        style={{
+          width: '260px', 
+          height: '260px',
+          left: 0, top: 0,
+          backdropFilter: 'url(#pull-filter)',
+          WebkitBackdropFilter: 'url(#pull-filter)',
+          maskImage: 'radial-gradient(circle at center, black 0%, transparent 55%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black 0%, transparent 55%)',
+          willChange: 'transform'
+        }}
+      />
+      
       {/* Hidden SVG Filter Definition for the Gooey Metaball effect */}
       <svg className="hidden">
         <defs>
@@ -439,6 +438,30 @@ export const CustomCursor = () => {
               mode="matrix" 
               values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -5" 
               result="goo" 
+            />
+          </filter>
+          
+          {/* Liquid Lens Pull Filter */}
+          <filter id="pull-filter" x="-20%" y="-20%" width="140%" height="140%">
+            {/* Very low frequency for smooth organic liquid, minimal ripples */}
+            <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="1" result="noise" />
+            
+            {/* Directional bias injected via React physics loop */}
+            <feColorMatrix 
+              id="velocity-matrix"
+              in="noise" 
+              type="matrix" 
+              values="1 0 0 0 0   0 1 0 0 0   0 0 1 0 0   0 0 0 1 0" 
+              result="biasedNoise" 
+            />
+            
+            <feDisplacementMap 
+              id="pull-map"
+              in="SourceGraphic" 
+              in2="biasedNoise" 
+              scale="0" 
+              xChannelSelector="R" 
+              yChannelSelector="G" 
             />
           </filter>
         </defs>
