@@ -296,18 +296,18 @@ export const CustomCursor = () => {
       const pullMap = document.getElementById('pull-map');
       
       if (velocityMatrix && pullMap) {
-        // Directional pull: push pixels in the direction of movement
-        const maxOffset = 0.45;
-        const pullFactor = 0.008;
+        // Directional pull: subtle ghosting / hot air drag
+        const maxOffset = 0.25;
+        const pullFactor = 0.005;
         // Invert vx/vy because sampling from the opposite direction moves pixels along the velocity vector
         const offsetX = Math.max(-maxOffset, Math.min(maxOffset, -vx * pullFactor));
         const offsetY = Math.max(-maxOffset, Math.min(maxOffset, -vy * pullFactor));
         
         velocityMatrix.setAttribute('values', `1 0 0 0 ${offsetX}  0 1 0 0 ${offsetY}  0 0 1 0 0  0 0 0 1 0`);
         
-        // Keep ripples minimal. Base scale is small, expands slightly on movement
-        const baseScale = 15;
-        const dynamicScale = Math.min(headSpeed * 1.5, 30);
+        // Ghost / Hot air effect: minimal short motion
+        const baseScale = 2; // tiny shimmer when still
+        const dynamicScale = Math.min(headSpeed * 0.4, 10); // short pull when moving
         
         const currentScale = parseFloat(pullMap.getAttribute('scale') || '0');
         const newScale = currentScale + ((baseScale + dynamicScale) - currentScale) * 0.15;
@@ -443,8 +443,8 @@ export const CustomCursor = () => {
           
           {/* Liquid Lens Pull Filter */}
           <filter id="pull-filter" x="-20%" y="-20%" width="140%" height="140%">
-            {/* Very low frequency for smooth organic liquid, minimal ripples */}
-            <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="1" result="noise" />
+            {/* Hot air / ghost effect: higher frequency for tighter ripples, 2 octaves for detail */}
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" result="noise" />
             
             {/* Directional bias injected via React physics loop */}
             <feColorMatrix 
