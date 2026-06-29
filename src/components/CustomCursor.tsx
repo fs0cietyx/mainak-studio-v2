@@ -1,5 +1,28 @@
 import React, { useEffect, useRef } from 'react';
 
+// Cache the noise pattern to avoid creating hundreds of canvases per second
+let cachedNoisePattern: CanvasPattern | null = null;
+const getNoisePattern = (ctx: CanvasRenderingContext2D) => {
+  if (cachedNoisePattern) return cachedNoisePattern;
+  const c = document.createElement('canvas');
+  c.width = 128;
+  c.height = 128;
+  const nCtx = c.getContext('2d');
+  if (nCtx) {
+    const imgData = nCtx.createImageData(128, 128);
+    for (let i = 0; i < imgData.data.length; i += 4) {
+      imgData.data[i] = 0; // Black RGB
+      imgData.data[i+1] = 0;
+      imgData.data[i+2] = 0;
+      // Binary alpha noise (transparent or opaque)
+      imgData.data[i+3] = Math.random() > 0.5 ? 255 : 0;
+    }
+    nCtx.putImageData(imgData, 0, 0);
+    cachedNoisePattern = ctx.createPattern(c, 'repeat');
+  }
+  return cachedNoisePattern;
+};
+
 // A single viscous droplet/node of the biological tail
 class BiologicalNode {
   x: number;
@@ -282,26 +305,6 @@ export const CustomCursor = () => {
 
 
 
-      // Calculate head movement speed for pixel abrasion physics
-      const headSpeed = speed * 0.15;
-      
-      // Update Physics-Induced Pixel Abrasion
-      const abrasionMap = document.getElementById('abrasion-map');
-      if (abrasionMap) {
-        // High speed = massive pixel tearing. Slow speed = smooth healing.
-        // We use a non-linear curve to make sudden movements highly dramatic
-        const targetScale = Math.min(Math.pow(headSpeed * 0.5, 1.5), 150);
-        
-        // Add a tiny bit of idle "breathing" glitch even when still
-        const idleGlitch = (Math.sin(currentTime * 10) * 0.5 + 0.5) * 5; 
-        
-        // Smooth out the transition so it feels organic, not jittery
-        const currentScale = parseFloat(abrasionMap.getAttribute('scale') || '0');
-        const newScale = currentScale + (targetScale + idleGlitch - currentScale) * 0.2;
-        
-        abrasionMap.setAttribute('scale', newScale.toString());
-      }
-
       // 8. Render Canvas (IK Metaball Engine) - EXTREME CPU OPTIMIZATION
       if (currentBlobSize.current < 0.5 && trailDroplets.current.length === 0) {
         if (canvasDirty.current) {
@@ -372,6 +375,34 @@ export const CustomCursor = () => {
             }
           }
           ctx.fill();
+          
+          // Physics-Induced Pixel Abrasion (Internal text glitching)
+          // We draw the noise pattern OVER the white blob using source-atop.
+          // Black pixels in the pattern will stop the 'difference' blend inversion,
+          // creating a glitchy torn pixel effect on the text *inside* the cursor
+          // when moving fast!
+          const pattern = getNoisePattern(ctx);
+          if (pattern) {
+            const headSpeed = speed * 0.15;
+            // Map speed to noise alpha. 
+            // Add a small baseline noise (0.05) so it always feels a bit static.
+            const glitchAlpha = Math.min(Math.pow(headSpeed * 0.1, 1.5) + 0.05, 1);
+            
+            if (glitchAlpha > 0.01) {
+              ctx.globalCompositeOperation = 'source-atop';
+              ctx.globalAlpha = glitchAlpha;
+              ctx.fillStyle = pattern;
+              ctx.save();
+              // Jitter the pattern offset every frame for TV static effect
+              ctx.translate(Math.floor(Math.random() * 128), Math.floor(Math.random() * 128));
+              ctx.fillRect(-128, -128, canvas.width + 128, canvas.height + 128);
+              ctx.restore();
+              
+              // Reset composite state
+              ctx.globalCompositeOperation = 'source-over';
+              ctx.globalAlpha = 1;
+            }
+          }
         }
       }
       }
@@ -408,17 +439,6 @@ export const CustomCursor = () => {
               mode="matrix" 
               values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -5" 
               result="goo" 
-            />
-            {/* Physics-Induced Pixel Abrasion */}
-            {/* High frequency fractal noise creates a torn, pixelated glitch effect */}
-            <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" result="noise" />
-            <feDisplacementMap 
-              id="abrasion-map"
-              in="goo" 
-              in2="noise" 
-              scale="0" 
-              xChannelSelector="R" 
-              yChannelSelector="G" 
             />
           </filter>
         </defs>
