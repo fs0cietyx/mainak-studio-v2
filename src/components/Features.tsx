@@ -149,7 +149,7 @@ const MacWindow: React.FC<{
       </div>
 
       {/* Main Content Canvas */}
-      <div className="flex-1 flex flex-col bg-black/40 min-w-0">
+      <div className="flex-1 flex flex-col bg-[#101010]/40 min-w-0">
         {/* Header / Toolbar */}
         <div className="h-16 border-b border-white/5 flex items-center justify-between px-8 shrink-0 select-none">
           <div className="flex items-center gap-2 text-[11px] text-gray-400 font-medium truncate">
@@ -205,7 +205,7 @@ const CertificatePreview: React.FC<{ cert: Certificate, onClose: () => void }> =
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-black/80 backdrop-blur-2xl"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-[#101010]/80 backdrop-blur-2xl"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -310,7 +310,7 @@ export const Features: React.FC = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="min-h-screen bg-black relative flex flex-col items-center justify-center py-32 px-6 overflow-hidden"
+      className="min-h-screen bg-[#101010] relative flex flex-col items-center justify-center py-32 px-6 overflow-hidden"
     >
       {/* Optimized Hardware-Accelerated Video Engine */}
       <video
@@ -378,7 +378,7 @@ export const Features: React.FC = () => {
       </div>
 
       {/* Mainak OS System Status Bar */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-10 bg-black/60 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full text-[8px] sm:text-[10px] uppercase tracking-[0.5em] text-gray-500 font-black whitespace-nowrap shadow-2xl select-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-10 bg-[#101010]/60 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full text-[8px] sm:text-[10px] uppercase tracking-[0.5em] text-gray-500 font-black whitespace-nowrap shadow-2xl select-none">
         <span className="text-[#E1E0CC]/60">Mainak OS v2.4</span>
         <div className="w-1.5 h-1.5 rounded-full bg-primary/60 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" />
         <span className="text-[#E1E0CC]/40">System: Operational</span>

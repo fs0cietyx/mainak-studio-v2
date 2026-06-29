@@ -12,6 +12,41 @@ interface HistoryItem {
 }
 
 /**
+ * Pure function to map terminal commands to outputs
+ */
+const processCommand = (cmd: string): string | React.ReactNode => {
+  switch (cmd) {
+    case 'help':
+      return 'Available commands:\n  ls projects   - View portfolio artifacts\n  whoami        - System user specifications\n  cat about.txt - Read the bio\n  sudo connect  - Initialize connection\n  clear         - Wipe terminal history\n  exit          - Close the session';
+    case 'ls projects':
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-primary font-bold">Selected Artifacts:</span>
+          <span>- CytoGraph ML (AI / Machine Learning)</span>
+          <span>- Maze Crawler (Algorithms / Pathfinding)</span>
+          <span>- AI Slop Detector (AI Governance / NLP)</span>
+          <span>- Semantic Repo Mapper (AST / Code Analysis)</span>
+        </div>
+      );
+    case 'whoami':
+      return 'User: Mainak Biswas\nRole: Creative Technologist\nStatus: Engineer & Designer\nFocus: Cinematic Web Experiences & AI Architecture';
+    case 'cat about.txt':
+      return 'I am Mainak Biswas, a Creative Technologist. I bridge the gap between heavy engineering and high-end aesthetic design. Less "beep boop," way more "oh la la".';
+    case 'sudo connect': {
+      const mail = getSecureEmail();
+      if (mail) {
+        setTimeout(() => {
+          window.location.href = `mailto:${mail}?subject=Secure%20Connection%20Request`;
+        }, 1000);
+      }
+      return 'Initializing secure connection relay... Authentication bypassed for system owner.';
+    }
+    default:
+      return `Command not found: "${cmd}". Type "help" for a list of available commands.`;
+  }
+};
+
+/**
  * Enterprise-grade Terminal Interface.
  * 
  * Implements weaponized input handling, GPU-accelerated motion,
@@ -63,51 +98,21 @@ export const Terminal: React.FC = () => {
     }
 
     const cmd = sanitizedInput.toLowerCase();
-    let output: string | React.ReactNode = '';
-
-    switch (cmd) {
-      case 'help':
-        output = 'Available commands:\n  ls projects   - View portfolio artifacts\n  whoami        - System user specifications\n  cat about.txt - Read the bio\n  sudo connect  - Initialize connection\n  clear         - Wipe terminal history\n  exit          - Close the session';
-        break;
-      case 'ls projects':
-        output = (
-          <div className="flex flex-col gap-1">
-            <span className="text-primary font-bold">Selected Artifacts:</span>
-            <span>- CytoGraph ML (AI / Machine Learning)</span>
-            <span>- Maze Crawler (Algorithms / Pathfinding)</span>
-            <span>- AI Slop Detector (AI Governance / NLP)</span>
-            <span>- Semantic Repo Mapper (AST / Code Analysis)</span>
-          </div>
-        );
-        break;
-      case 'whoami':
-        output = 'User: Mainak Biswas\nRole: Creative Technologist\nStatus: Engineer & Designer\nFocus: Cinematic Web Experiences & AI Architecture';
-        break;
-      case 'cat about.txt':
-        output = 'I am Mainak Biswas, a Creative Technologist. I bridge the gap between heavy engineering and high-end aesthetic design. Less "beep boop," way more "oh la la."';
-        break;
-      case 'sudo connect':
-        output = 'Initializing secure connection relay... Authentication bypassed for system owner.';
-        const mail = getSecureEmail();
-        // [AppSec] Protocol Reliability: Using standard anchor behavior for mailto
-        setTimeout(() => {
-          if (mail) {
-            window.location.href = `mailto:${mail}?subject=Secure%20Connection%20Request`;
-          }
-        }, 1000);
-        break;
-      case 'clear':
-        setHistory([]);
-        setInput('');
-        return;
-      case 'exit':
-        setIsOpen(false);
-        setInput('');
-        return;
-      default:
-        output = `Command not found: "${sanitizedInput}". Type "help" for a list of available commands.`;
+    
+    if (cmd === 'clear') {
+      setHistory([]);
+      setInput('');
+      return;
+    }
+    
+    if (cmd === 'exit') {
+      setIsOpen(false);
+      setInput('');
+      return;
     }
 
+    const output = processCommand(cmd);
+    
     setHistory(prev => [...prev, { command: sanitizedInput, output }]);
     setInput('');
   }, [input]);
@@ -135,7 +140,7 @@ export const Terminal: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto"
+              className="absolute inset-0 bg-[#101010]/60 backdrop-blur-md pointer-events-auto"
             />
 
             {/* Terminal Window - GPU Accelerated Transitions */}
@@ -144,7 +149,7 @@ export const Terminal: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
               transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-              className="relative w-full max-w-3xl h-[65vh] bg-black/90 backdrop-blur-xl border border-[#E1E0CC]/10 rounded-2xl overflow-hidden flex flex-col pointer-events-auto shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
+              className="relative w-full max-w-3xl h-[65vh] bg-[#101010]/90 backdrop-blur-xl border border-[#E1E0CC]/10 rounded-2xl overflow-hidden flex flex-col pointer-events-auto shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
             >
               {/* Noise Grain Overlay */}
               <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none" />
@@ -193,7 +198,7 @@ export const Terminal: React.FC = () => {
               {/* Input Gateway */}
               <form 
                 onSubmit={handleCommand} 
-                className="p-5 bg-black/50 border-t border-[#E1E0CC]/5 flex items-center gap-3"
+                className="p-5 bg-[#101010]/50 border-t border-[#E1E0CC]/5 flex items-center gap-3"
               >
                 <span className="text-primary font-mono text-sm font-bold">mainak@os:~$</span>
                 <input

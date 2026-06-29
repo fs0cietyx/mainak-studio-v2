@@ -25,7 +25,7 @@ export const getSecureEmail = (): string => {
   try {
     // Decodes base64 string
     return atob(encoded);
-  } catch (error) {
+  } catch {
     console.error('STRATEGIC_SECURITY_FAILURE: Failed to decode contact identifier. Integrity compromised.');
     return '';
   }
@@ -46,6 +46,6 @@ export const sanitizeTerminalInput = (input: string, maxLength: number = 100): s
   return input
     .trim()
     .slice(0, maxLength)
-    .replace(/[^\w\s\.\-]/gi, '')
+    .replace(/[^\w\s.-]/gi, '')
     .replace(/script/gi, '[REDACTED]');
 };

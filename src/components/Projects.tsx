@@ -50,7 +50,7 @@ export const Projects: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   return (
-    <section ref={containerRef} className="bg-black relative w-full pt-32 pb-40">
+    <section ref={containerRef} className="bg-[#101010] relative w-full pt-32 pb-40">
       
       {/* Intro Header */}
       <div className="flex flex-col items-center justify-center px-6 text-center mb-32">
@@ -103,7 +103,7 @@ export const Projects: React.FC = () => {
                 </div>
 
                 {/* Media Presentation */}
-                <div className={`relative aspect-video sm:aspect-square lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-black border border-white/10 shadow-2xl ${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
+                <div className={`relative aspect-video sm:aspect-square lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#101010] border border-white/10 shadow-2xl ${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
                   {project.type === 'video' ? (
                     <video
                       autoPlay
@@ -115,7 +115,7 @@ export const Projects: React.FC = () => {
                       <source src={project.asset} type="video/mp4" />
                     </video>
                   ) : (
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={project.asset}
                       alt={project.title}
                       className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-500"

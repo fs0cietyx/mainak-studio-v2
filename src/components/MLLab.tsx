@@ -1,23 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-// Raw JS Convolutional Neural Network Implementation
-// Blisteringly fast, runs in <1ms without TFJS dependencies
-import weightsRaw from '../assets/cnn_weights.json';
-
-const weights = weightsRaw as {
-  conv_weight: number[][][][]; // [8, 1, 3, 3]
-  conv_bias: number[];         // [8]
-  fc_weight: number[][];       // [10, 1568]
-  fc_bias: number[];           // [10]
-};
-
-// Softmax activation
-const softmax = (arr: number[]) => {
-  const max = Math.max(...arr);
-  const exps = arr.map(x => Math.exp(x - max));
-  const sum = exps.reduce((a, b) => a + b, 0);
-  return exps.map(x => x / sum);
-};
+import { predictFromCanvasData } from '../utils/mlEngine';
 
 export const MLLab: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,13 +15,19 @@ export const MLLab: React.FC = () => {
     offset: ['start end', 'end start']
   });
   
-  const textX = useTransform(scrollYProgress, [0, 0.35], ["-50vw", "100vw"]);
-  const gifX = useTransform(scrollYProgress, [0, 0.35], ["100vw", "0vw"]);
-  const introY = useTransform(scrollYProgress, [0.35, 0.45], ["0vh", "-100vh"]);
-  const introOpacity = useTransform(scrollYProgress, [0.35, 0.45], [1, 0]);
+  // Text moves from far left to far right (accounting for 250vw width)
+  const textX = useTransform(scrollYProgress, [0, 0.5], ["-200vw", "200vw"]);
+  
+  // GIF moves from right and stops in the middle
+  const gifX = useTransform(scrollYProgress, [0, 0.2], ["100vw", "0vw"]);
+  
+  // GIF stays stationary until 0.5 (waiting for text to completely exit), then moves down
+  const introY = useTransform(scrollYProgress, [0.5, 0.6], ["0vh", "100vh"]);
+  const introOpacity = useTransform(scrollYProgress, [0.5, 0.6], [1, 0]);
 
-  const sandboxOpacity = useTransform(scrollYProgress, [0.45, 0.55, 0.8, 0.9], [0, 1, 1, 0]);
-  const sandboxY = useTransform(scrollYProgress, [0.45, 0.55], [50, 0]);
+  // Sandbox glides in exactly as the GIF drops
+  const sandboxOpacity = useTransform(scrollYProgress, [0.5, 0.6, 0.9, 1], [0, 1, 1, 0]);
+  const sandboxY = useTransform(scrollYProgress, [0.5, 0.6], [50, 0]);
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d');
@@ -91,119 +80,16 @@ export const MLLab: React.FC = () => {
     if (!canvas || !ctx) return;
 
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    const gridSize = canvas.width / 28;
-    const rawVec = new Array(28 * 28).fill(0);
+    const probabilities = predictFromCanvasData(data, canvas.width);
     
-    let hasData = false;
-    let minX = 28, maxX = -1, minY = 28, maxY = -1;
-
-    for (let y = 0; y < 28; y++) {
-      for (let x = 0; x < 28; x++) {
-        let sum = 0;
-        for (let dy = 0; dy < gridSize; dy++) {
-          for (let dx = 0; dx < gridSize; dx++) {
-            sum += data[((y * gridSize + dy) * canvas.width + (x * gridSize + dx)) * 4];
-          }
-        }
-        let val = sum / (gridSize * gridSize);
-        if (val > 0) {
-          hasData = true;
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
-        }
-        rawVec[y * 28 + x] = val;
-      }
+    if (probabilities) {
+      setProbs(probabilities);
+      setPrediction(probabilities.indexOf(Math.max(...probabilities)));
     }
-
-    if (!hasData) return;
-
-    const centerX = Math.floor((minX + maxX) / 2);
-    const centerY = Math.floor((minY + maxY) / 2);
-    const shiftX = 14 - centerX;
-    const shiftY = 14 - centerY;
-
-    const inputGrid = new Array(28).fill(0).map(() => new Array(28).fill(0));
-    for (let y = 0; y < 28; y++) {
-      for (let x = 0; x < 28; x++) {
-        const srcX = x - shiftX;
-        const srcY = y - shiftY;
-        if (srcX >= 0 && srcX < 28 && srcY >= 0 && srcY < 28) {
-          let val = rawVec[srcY * 28 + srcX];
-          inputGrid[y][x] = ((val / 255.0) - 0.1307) / 0.3081;
-        } else {
-          inputGrid[y][x] = ((0.0 / 255.0) - 0.1307) / 0.3081;
-        }
-      }
-    }
-
-    // --- FORWARD PASS: TINY CNN ---
-    
-    // 1. Conv2D (1 in, 8 out, 3x3 kernel, pad 1) + ReLU
-    const convOut = new Array(8).fill(0).map(() => new Array(28).fill(0).map(() => new Array(28).fill(0)));
-    for (let c = 0; c < 8; c++) {
-      for (let y = 0; y < 28; y++) {
-        for (let x = 0; x < 28; x++) {
-          let val = weights.conv_bias[c];
-          for (let ky = 0; ky < 3; ky++) {
-            for (let kx = 0; kx < 3; kx++) {
-              const inY = y + ky - 1;
-              const inX = x + kx - 1;
-              if (inY >= 0 && inY < 28 && inX >= 0 && inX < 28) {
-                val += inputGrid[inY][inX] * weights.conv_weight[c][0][ky][kx];
-              }
-            }
-          }
-          convOut[c][y][x] = Math.max(0, val); // ReLU
-        }
-      }
-    }
-
-    // 2. MaxPool2D (2x2)
-    const poolOut = new Array(8).fill(0).map(() => new Array(14).fill(0).map(() => new Array(14).fill(0)));
-    for (let c = 0; c < 8; c++) {
-      for (let y = 0; y < 14; y++) {
-        for (let x = 0; x < 14; x++) {
-          let maxVal = -Infinity;
-          for (let py = 0; py < 2; py++) {
-            for (let px = 0; px < 2; px++) {
-              maxVal = Math.max(maxVal, convOut[c][y * 2 + py][x * 2 + px]);
-            }
-          }
-          poolOut[c][y][x] = maxVal;
-        }
-      }
-    }
-
-    // 3. Flatten
-    const flat = new Array(8 * 14 * 14);
-    let idx = 0;
-    for (let c = 0; c < 8; c++) {
-      for (let y = 0; y < 14; y++) {
-        for (let x = 0; x < 14; x++) {
-          flat[idx++] = poolOut[c][y][x];
-        }
-      }
-    }
-
-    // 4. Linear (1568 -> 10)
-    const out = new Array(10).fill(0);
-    for (let i = 0; i < 10; i++) {
-      let val = weights.fc_bias[i];
-      for (let j = 0; j < 1568; j++) {
-        val += flat[j] * weights.fc_weight[i][j];
-      }
-      out[i] = val;
-    }
-
-    const probabilities = softmax(out);
-    setProbs(probabilities);
-    setPrediction(probabilities.indexOf(Math.max(...probabilities)));
   };
 
   return (
-    <section ref={containerRef} className="relative w-full h-[300vh] bg-black text-white">
+    <section ref={containerRef} className="relative w-full h-[400vh] bg-black text-white">
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
         
         {/* Step 1: Animated Text & GIF Sequence */}
@@ -217,8 +103,8 @@ export const MLLab: React.FC = () => {
             style={{ x: textX, willChange: "transform" }}
           >
             <span 
-              className="text-[18vw] font-black text-white/10 whitespace-nowrap tracking-tighter"
-              style={{ fontFamily: "'Libre Mono', monospace" }}
+              className="text-[18vw] md:text-[14vw] text-[#E1E0CC]/15 drop-shadow-lg whitespace-nowrap tracking-tighter"
+              style={{ fontFamily: "'Magazine Letter', system-ui" }}
             >
               NEURAL SANDBOX
             </span>
@@ -229,7 +115,7 @@ export const MLLab: React.FC = () => {
             className="relative w-72 md:w-[450px]"
             style={{ x: gifX, willChange: "transform" }}
           >
-            <img 
+            <img loading="lazy" decoding="async" 
               src="/hero-gif.gif" 
               alt="Neural Lab Intro" 
               className="w-full h-auto rounded-lg shadow-2xl"

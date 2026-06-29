@@ -1,0 +1,564 @@
+commit 1499adac061652ab88a9152032051c9bff711ae8
+Author: Mainak Biswas <mainakbiswas22@gmail.com>
+Date:   Fri Jun 26 20:56:35 2026 +0530
+
+    fix: resolve typescript unused variable build errors
+
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index 3d3fd82..52d6413 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,8 +1,6 @@
+ import React, { useState } from 'react';
+ import { motion, AnimatePresence } from 'framer-motion';
+-import { ArrowRight } from 'lucide-react';
+ import { WordsPullUp } from './animations';
+-import { getSecureEmail } from '../utils/security';
+ 
+ 
+ 
+@@ -52,7 +50,6 @@ const CylinderRow = ({ text, href, direction, onClick, isExternal, isDownload }:
+ 
+ const Navbar: React.FC = () => {
+   const [isOpen, setIsOpen] = useState(false);
+-  const email: string = getSecureEmail();
+ 
+   return (
+     <>
+@@ -117,8 +114,6 @@ const Navbar: React.FC = () => {
+  * Utilizes GPU-accelerated transforms and optimized video rendering.
+  */
+ export const Hero: React.FC = () => {
+-  const secureEmail: string = getSecureEmail();
+-
+   return (
+     <section className="h-screen w-full p-4 md:p-6 bg-black relative overflow-hidden">
+       <div className="w-full h-full rounded-2xl md:rounded-[2.5rem] overflow-hidden relative shadow-2xl">
+
+commit 054338b2db613af07ab9b3b2459d30468af2a4ca
+Author: Mainak Biswas <mainakbiswas22@gmail.com>
+Date:   Fri Jun 26 18:10:38 2026 +0530
+
+    feat(performance): implement hardware acceleration, cinematic scroll tuning, native CNN, and WebGL optimizations
+
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index 5fc2498..3d3fd82 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,17 +1,10 @@
+-import React from 'react';
+-import { motion } from 'framer-motion';
++import React, { useState } from 'react';
++import { motion, AnimatePresence } from 'framer-motion';
+ import { ArrowRight } from 'lucide-react';
+ import { WordsPullUp } from './animations';
+ import { getSecureEmail } from '../utils/security';
+ 
+-/**
+- * Interface for navigation artifacts.
+- */
+-interface NavItem {
+-  label: string;
+-  href: string;
+-  isExternal: boolean;
+-}
++
+ 
+ /**
+  * Enterprise-grade Navigation Bar.
+@@ -19,33 +12,101 @@ interface NavItem {
+  * Implements frost-glass aesthetics, GPU-accelerated hover states,
+  * and secure protocol handling for contact relays.
+  */
++
++const CylinderRow = ({ text, href, direction, onClick, isExternal, isDownload }: any) => {
++  const items = text.length > 10 ? 3 : text.length > 6 ? 4 : 6;
++  const degree = 360 / items;
++  const fontSizeClass = text.length > 10 ? "text-[4.5vh] sm:text-[6vh]" : "text-[6vh] sm:text-[8vh]";
++  
++  return (
++    <div className="relative w-full h-[10vh] sm:h-[12vh] flex items-center justify-center pointer-events-auto" style={{ perspective: '1200px' }}>
++      <div className="absolute w-full h-full flex items-center justify-center" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(-30vw)' }}>
++        <motion.a
++          href={href}
++          onClick={onClick}
++          target={isExternal ? '_blank' : '_self'}
++          download={isDownload ? true : undefined}
++          animate={{ rotateY: direction === 1 ? [0, -360] : [0, 360] }}
++          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
++          className="absolute w-full h-full flex items-center justify-center group"
++          style={{ transformStyle: 'preserve-3d' }}
++        >
++          {[...Array(items)].map((_, i) => (
++            <span
++              key={i}
++              className={`absolute text-[#E1E0CC]/50 group-hover:text-white transition-colors duration-300 font-sans font-bold uppercase tracking-tighter leading-none ${fontSizeClass} scale-y-110 whitespace-nowrap cursor-pointer`}
++              style={{
++                transform: `rotateY(${i * degree}deg) translateZ(35vw)`,
++                backfaceVisibility: 'hidden',
++                WebkitBackfaceVisibility: 'hidden'
++              }}
++            >
++              {text}
++            </span>
++          ))}
++        </motion.a>
++      </div>
++    </div>
++  );
++};
++
+ const Navbar: React.FC = () => {
++  const [isOpen, setIsOpen] = useState(false);
+   const email: string = getSecureEmail();
+-  
+-  const navItems: NavItem[] = [
+-    { label: "About", href: "#about", isExternal: false },
+-    { label: "Focus", href: "#focus", isExternal: false },
+-    { label: "Portfolio", href: "#projects", isExternal: false },
+-    { label: "GitHub", href: "https://github.com/fs0cietyx", isExternal: true },
+-    { label: "Lab", href: `mailto:${email}?subject=Lab%20Inquiry`, isExternal: true }
+-  ];
+ 
+   return (
+-    <nav className="absolute top-0 left-1/2 -translate-x-1/2 z-50 w-full flex justify-center p-4">
+-      <div className="bg-black/80 backdrop-blur-md border border-[#E1E0CC]/10 rounded-full px-6 py-2 flex items-center gap-6 sm:gap-10 md:gap-14">
+-        {navItems.map((item) => (
+-          <a
+-            key={item.label}
+-            href={item.href}
+-            target={item.isExternal ? '_blank' : '_self'}
+-            rel={item.isExternal ? 'noopener noreferrer' : ''}
+-            className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 hover:text-[#E1E0CC] text-[#E1E0CC]/60 active:scale-95"
+-          >
+-            {item.label}
+-          </a>
+-        ))}
+-      </div>
+-    </nav>
++    <>
++      <nav className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
++        <button
++          onClick={() => setIsOpen(!isOpen)}
++          className="p-4 flex items-center justify-center transition-transform active:scale-95 group cursor-pointer"
++        >
++          <div className="relative flex flex-col justify-between w-6 h-4">
++            <motion.span 
++              animate={isOpen ? { rotate: 45, y: 7, backgroundColor: "#ef4444" } : { rotate: 0, y: 0, backgroundColor: "#E1E0CC" }} 
++              transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
++              className="w-full h-[1.5px] block origin-center"
++            />
++            <motion.span 
++              animate={isOpen ? { rotate: -45, backgroundColor: "#ef4444" } : { rotate: 0, backgroundColor: "#E1E0CC" }} 
++              transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
++              className="w-full h-[1.5px] block origin-center"
++            />
++            <motion.span 
++              animate={isOpen ? { rotate: -45, y: -7, backgroundColor: "#ef4444" } : { rotate: 0, y: 0, backgroundColor: "#E1E0CC" }} 
++              transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
++              className="w-full h-[1.5px] block origin-center"
++            />
++          </div>
++        </button>
++      </nav>
++
++        <AnimatePresence>
++          {isOpen && (
++            <motion.div
++              initial="hidden"
++              animate="visible"
++              exit="hidden"
++              className="fixed inset-0 z-40"
++            >
++              {/* Background Overlay */}
++              <motion.div
++                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
++                transition={{ duration: 0.5 }}
++                className="absolute inset-0 bg-black/95 backdrop-blur-xl"
++              />
++              
++              {/* 3D Content Container */}
++              <div className="absolute inset-0 flex flex-col items-center justify-center w-full h-full space-y-4 pointer-events-none">
++                <CylinderRow text="RESUME" href="/resume.pdf" direction={1} onClick={() => setIsOpen(false)} isDownload={true} />
++                <CylinderRow text="GITHUB" href="https://github.com/fs0cietyx" direction={-1} onClick={() => setIsOpen(false)} isExternal={true} />
++                <CylinderRow text="MNIST SANDBOX" href="#mllab" direction={1} onClick={() => setIsOpen(false)} />
++                <CylinderRow text="CONTACT ME" href="#contact" direction={-1} onClick={() => setIsOpen(false)} />
++              </div>
++            </motion.div>
++          )}
++        </AnimatePresence>
++    </>
+   );
+ };
+ 
+@@ -70,8 +131,7 @@ export const Hero: React.FC = () => {
+           poster="/hero-poster.jpg"
+           className="absolute inset-0 w-full h-full object-cover scale-105 pointer-events-none opacity-60"
+         >
+-          {/* Environment-agnostic video source */}
+-          <source src={import.meta.env.VITE_HERO_VIDEO_URL} type="video/mp4" />
++          <source src="/hero-video.mp4" type="video/mp4" />
+         </video>
+ 
+         {/* Cinematic Overlays - GPU Rendered */}
+@@ -88,13 +148,13 @@ export const Hero: React.FC = () => {
+             <div className="md:col-span-8 flex flex-col items-start select-none">
+               <WordsPullUp
+                 text="Mainak"
+-                className="text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-medium leading-[0.7] tracking-[-0.08em]"
++                className="font-display text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-bold leading-[0.7] tracking-[-0.08em]"
+                 style={{ color: '#E1E0CC' }}
+               />
+               <WordsPullUp
+                 text="Biswas"
+                 showAsterisk
+-                className="text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-medium leading-[0.7] tracking-[-0.08em]"
++                className="font-display text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-bold leading-[0.7] tracking-[-0.08em]"
+                 style={{ color: '#E1E0CC' }}
+               />
+             </div>
+@@ -108,9 +168,7 @@ export const Hero: React.FC = () => {
+                 transition={{ duration: 1.2, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
+                 className="text-primary/80 text-xs sm:text-sm md:text-base leading-[1.3] max-w-sm font-medium"
+               >
+-                Creative Technologist, AI/ML Engineer & Visual Storyteller. 
+-                Engineering the intersection of neural intelligence and cinematic imagination 
+-                at KIIT University. Designing software that resonates on a human level.
++                Creative Technologist & AI/ML Engineer at KIIT University. I teach silicon how to dream in high-definition. Building intelligent software so beautiful, even the machines get a little jealous.
+               </motion.p>
+ 
+               {/* Secure CTA Relay */}
+@@ -120,17 +178,7 @@ export const Hero: React.FC = () => {
+                 viewport={{ once: true }}
+                 transition={{ duration: 1.2, delay: 0.6, ease: [0.19, 1, 0.22, 1] }}
+               >
+-                <a
+-                  href={`mailto:${secureEmail}?subject=Connection%20Request`}
+-                  className="group flex items-center gap-3 bg-primary w-fit rounded-full pl-8 pr-2 py-2 transition-all hover:bg-white active:scale-95 no-underline"
+-                >
+-                  <span className="text-black font-black text-sm uppercase tracking-widest">
+-                    Enter the lab
+-                  </span>
+-                  <div className="bg-black rounded-full w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110">
+-                    <ArrowRight className="text-primary w-5 h-5" />
+-                  </div>
+-                </a>
++                {/* The GIF was removed from here per user request */}
+               </motion.div>
+             </div>
+           </div>
+
+commit a97542ca5244c3b5e4f364f637f0dd37f377c543
+Author: Mainak Biswas <mainakbiswas22@gmail.com>
+Date:   Sun Jun 7 17:07:30 2026 +0530
+
+    feat: professionalize portfolio documentation and add Maze Crawler showcase
+
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index 39b7609..5fc2498 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,17 +1,35 @@
++import React from 'react';
+ import { motion } from 'framer-motion';
+ import { ArrowRight } from 'lucide-react';
+ import { WordsPullUp } from './animations';
+ import { getSecureEmail } from '../utils/security';
+ 
+-const Navbar = () => {
+-  const email = getSecureEmail();
+-  const navItems = [
+-    { label: "About", href: "#about" },
+-    { label: "Focus", href: "#focus" },
+-    { label: "Portfolio", href: "#projects" },
+-    { label: "GitHub", href: "https://github.com/fs0cietyx" },
+-    { label: "Lab", href: `mailto:${email}` }
++/**
++ * Interface for navigation artifacts.
++ */
++interface NavItem {
++  label: string;
++  href: string;
++  isExternal: boolean;
++}
++
++/**
++ * Enterprise-grade Navigation Bar.
++ * 
++ * Implements frost-glass aesthetics, GPU-accelerated hover states,
++ * and secure protocol handling for contact relays.
++ */
++const Navbar: React.FC = () => {
++  const email: string = getSecureEmail();
++  
++  const navItems: NavItem[] = [
++    { label: "About", href: "#about", isExternal: false },
++    { label: "Focus", href: "#focus", isExternal: false },
++    { label: "Portfolio", href: "#projects", isExternal: false },
++    { label: "GitHub", href: "https://github.com/fs0cietyx", isExternal: true },
++    { label: "Lab", href: `mailto:${email}?subject=Lab%20Inquiry`, isExternal: true }
+   ];
++
+   return (
+     <nav className="absolute top-0 left-1/2 -translate-x-1/2 z-50 w-full flex justify-center p-4">
+       <div className="bg-black/80 backdrop-blur-md border border-[#E1E0CC]/10 rounded-full px-6 py-2 flex items-center gap-6 sm:gap-10 md:gap-14">
+@@ -19,12 +37,9 @@ const Navbar = () => {
+           <a
+             key={item.label}
+             href={item.href}
+-            target={item.href.startsWith('http') ? '_blank' : '_self'}
+-            rel={item.href.startsWith('http') ? 'noopener noreferrer' : ''}
+-            className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] transition-colors"
+-            style={{ color: 'rgba(225, 224, 204, 0.7)' }}
+-            onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
+-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.7)')}
++            target={item.isExternal ? '_blank' : '_self'}
++            rel={item.isExternal ? 'noopener noreferrer' : ''}
++            className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 hover:text-[#E1E0CC] text-[#E1E0CC]/60 active:scale-95"
+           >
+             {item.label}
+           </a>
+@@ -34,71 +49,89 @@ const Navbar = () => {
+   );
+ };
+ 
+-export const Hero = () => {
++/**
++ * High-Performance Cinematic Hero Section.
++ * 
++ * Adheres to Pillar III (Cinematic Motion) and Pillar IV (Core Web Vitals).
++ * Utilizes GPU-accelerated transforms and optimized video rendering.
++ */
++export const Hero: React.FC = () => {
++  const secureEmail: string = getSecureEmail();
++
+   return (
+-    <section className="h-screen w-full p-4 md:p-6 bg-black relative">
+-      <div className="w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden relative">
+-        {/* Background Video */}
++    <section className="h-screen w-full p-4 md:p-6 bg-black relative overflow-hidden">
++      <div className="w-full h-full rounded-2xl md:rounded-[2.5rem] overflow-hidden relative shadow-2xl">
++        {/* Optimized Background Engine */}
+         <video
+           autoPlay
+           loop
+           muted
+           playsInline
+           poster="/hero-poster.jpg"
+-          className="absolute inset-0 w-full h-full object-cover"
++          className="absolute inset-0 w-full h-full object-cover scale-105 pointer-events-none opacity-60"
+         >
++          {/* Environment-agnostic video source */}
+           <source src={import.meta.env.VITE_HERO_VIDEO_URL} type="video/mp4" />
+         </video>
+ 
+-        {/* Overlays */}
+-        <div className="absolute inset-0 noise-overlay opacity-[0.7] mix-blend-overlay pointer-events-none" />
+-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
++        {/* Cinematic Overlays - GPU Rendered */}
++        <div className="absolute inset-0 noise-overlay opacity-[0.4] mix-blend-overlay pointer-events-none" />
++        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none" />
+ 
+         <Navbar />
+ 
+-        {/* Content */}
+-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 z-10">
+-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+-            {/* Heading */}
+-            <div className="md:col-span-8 flex flex-col items-start">
++        {/* Adaptive Layout Canvas */}
++        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10">
++          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
++            
++            {/* Semantic Typography Engine */}
++            <div className="md:col-span-8 flex flex-col items-start select-none">
+               <WordsPullUp
+                 text="Mainak"
+-                className="text-[16vw] sm:text-[14vw] md:text-[12vw] lg:text-[11vw] xl:text-[10vw] 2xl:text-[11vw] font-medium leading-[0.75] tracking-[-0.08em]"
+-                style={{ color: '#E1E0CC' } as React.CSSProperties}
++                className="text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-medium leading-[0.7] tracking-[-0.08em]"
++                style={{ color: '#E1E0CC' }}
+               />
+               <WordsPullUp
+                 text="Biswas"
+                 showAsterisk
+-                className="text-[16vw] sm:text-[14vw] md:text-[12vw] lg:text-[11vw] xl:text-[10vw] 2xl:text-[11vw] font-medium leading-[0.75] tracking-[-0.08em]"
+-                style={{ color: '#E1E0CC' } as React.CSSProperties}
++                className="text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[11vw] font-medium leading-[0.7] tracking-[-0.08em]"
++                style={{ color: '#E1E0CC' }}
+               />
+             </div>
+ 
+-            {/* Description & CTA */}
+-            <div className="md:col-span-4 flex flex-col gap-6">
++            {/* Strategic Conversion Content */}
++            <div className="md:col-span-4 flex flex-col gap-8">
+               <motion.p
+-                initial={{ opacity: 0, y: 20 }}
++                initial={{ opacity: 0, y: 15 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+-                transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+-                className="text-primary/70 text-xs sm:text-sm md:text-base leading-[1.2] max-w-sm"
++                transition={{ duration: 1.2, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
++                className="text-primary/80 text-xs sm:text-sm md:text-base leading-[1.3] max-w-sm font-medium"
+               >
+-                Mainak Biswas is a Creative Technologist, AI/ML Engineer & Visual Storyteller. Shaping the intersection of intelligence and imagination, I leverage AI/ML engineering principles at KIIT University and my platform as a Google Student Ambassador to build next-generation software, while directing cinematic narratives that connect with people on a human level.
++                Creative Technologist, AI/ML Engineer & Visual Storyteller. 
++                Engineering the intersection of neural intelligence and cinematic imagination 
++                at KIIT University. Designing software that resonates on a human level.
+               </motion.p>
+ 
+-              <motion.a
+-                href={`mailto:${getSecureEmail()}`}
+-                initial={{ opacity: 0, y: 20 }}
++              {/* Secure CTA Relay */}
++              <motion.div
++                initial={{ opacity: 0, y: 15 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+-                transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+-                className="group flex items-center gap-2 bg-primary w-fit rounded-full pl-6 pr-1 py-1 transition-all hover:gap-3 cursor-pointer no-underline"
++                transition={{ duration: 1.2, delay: 0.6, ease: [0.19, 1, 0.22, 1] }}
+               >
+-                <span className="text-black font-medium text-sm sm:text-base uppercase tracking-wider">Join the lab</span>
+-                <div className="bg-black rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center transition-transform group-hover:scale-110">
+-                  <ArrowRight className="text-primary w-5 h-5" />
+-                </div>
+-              </motion.a>
++                <a
++                  href={`mailto:${secureEmail}?subject=Connection%20Request`}
++                  className="group flex items-center gap-3 bg-primary w-fit rounded-full pl-8 pr-2 py-2 transition-all hover:bg-white active:scale-95 no-underline"
++                >
++                  <span className="text-black font-black text-sm uppercase tracking-widest">
++                    Enter the lab
++                  </span>
++                  <div className="bg-black rounded-full w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110">
++                    <ArrowRight className="text-primary w-5 h-5" />
++                  </div>
++                </a>
++              </motion.div>
+             </div>
+           </div>
+         </div>
+
+commit 12c27c65250860fe3ea05d1668c1f9e324a90c32
+Author: Mainak Biswas <mainakbiswas@Mainaks-MacBook-Air.local>
+Date:   Thu Jun 4 20:46:10 2026 +0530
+
+    feat: initial commit with asset sovereignty and devsecops hardening
+
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+new file mode 100644
+index 0000000..39b7609
+--- /dev/null
++++ b/src/components/Hero.tsx
+@@ -0,0 +1,108 @@
++import { motion } from 'framer-motion';
++import { ArrowRight } from 'lucide-react';
++import { WordsPullUp } from './animations';
++import { getSecureEmail } from '../utils/security';
++
++const Navbar = () => {
++  const email = getSecureEmail();
++  const navItems = [
++    { label: "About", href: "#about" },
++    { label: "Focus", href: "#focus" },
++    { label: "Portfolio", href: "#projects" },
++    { label: "GitHub", href: "https://github.com/fs0cietyx" },
++    { label: "Lab", href: `mailto:${email}` }
++  ];
++  return (
++    <nav className="absolute top-0 left-1/2 -translate-x-1/2 z-50 w-full flex justify-center p-4">
++      <div className="bg-black/80 backdrop-blur-md border border-[#E1E0CC]/10 rounded-full px-6 py-2 flex items-center gap-6 sm:gap-10 md:gap-14">
++        {navItems.map((item) => (
++          <a
++            key={item.label}
++            href={item.href}
++            target={item.href.startsWith('http') ? '_blank' : '_self'}
++            rel={item.href.startsWith('http') ? 'noopener noreferrer' : ''}
++            className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] transition-colors"
++            style={{ color: 'rgba(225, 224, 204, 0.7)' }}
++            onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
++            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.7)')}
++          >
++            {item.label}
++          </a>
++        ))}
++      </div>
++    </nav>
++  );
++};
++
++export const Hero = () => {
++  return (
++    <section className="h-screen w-full p-4 md:p-6 bg-black relative">
++      <div className="w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden relative">
++        {/* Background Video */}
++        <video
++          autoPlay
++          loop
++          muted
++          playsInline
++          poster="/hero-poster.jpg"
++          className="absolute inset-0 w-full h-full object-cover"
++        >
++          <source src={import.meta.env.VITE_HERO_VIDEO_URL} type="video/mp4" />
++        </video>
++
++        {/* Overlays */}
++        <div className="absolute inset-0 noise-overlay opacity-[0.7] mix-blend-overlay pointer-events-none" />
++        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
++
++        <Navbar />
++
++        {/* Content */}
++        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 z-10">
++          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
++            {/* Heading */}
++            <div className="md:col-span-8 flex flex-col items-start">
++              <WordsPullUp
++                text="Mainak"
++                className="text-[16vw] sm:text-[14vw] md:text-[12vw] lg:text-[11vw] xl:text-[10vw] 2xl:text-[11vw] font-medium leading-[0.75] tracking-[-0.08em]"
++                style={{ color: '#E1E0CC' } as React.CSSProperties}
++              />
++              <WordsPullUp
++                text="Biswas"
++                showAsterisk
++                className="text-[16vw] sm:text-[14vw] md:text-[12vw] lg:text-[11vw] xl:text-[10vw] 2xl:text-[11vw] font-medium leading-[0.75] tracking-[-0.08em]"
++                style={{ color: '#E1E0CC' } as React.CSSProperties}
++              />
++            </div>
++
++            {/* Description & CTA */}
++            <div className="md:col-span-4 flex flex-col gap-6">
++              <motion.p
++                initial={{ opacity: 0, y: 20 }}
++                whileInView={{ opacity: 1, y: 0 }}
++                viewport={{ once: true }}
++                transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
++                className="text-primary/70 text-xs sm:text-sm md:text-base leading-[1.2] max-w-sm"
++              >
++                Mainak Biswas is a Creative Technologist, AI/ML Engineer & Visual Storyteller. Shaping the intersection of intelligence and imagination, I leverage AI/ML engineering principles at KIIT University and my platform as a Google Student Ambassador to build next-generation software, while directing cinematic narratives that connect with people on a human level.
++              </motion.p>
++
++              <motion.a
++                href={`mailto:${getSecureEmail()}`}
++                initial={{ opacity: 0, y: 20 }}
++                whileInView={{ opacity: 1, y: 0 }}
++                viewport={{ once: true }}
++                transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
++                className="group flex items-center gap-2 bg-primary w-fit rounded-full pl-6 pr-1 py-1 transition-all hover:gap-3 cursor-pointer no-underline"
++              >
++                <span className="text-black font-medium text-sm sm:text-base uppercase tracking-wider">Join the lab</span>
++                <div className="bg-black rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center transition-transform group-hover:scale-110">
++                  <ArrowRight className="text-primary w-5 h-5" />
++                </div>
++              </motion.a>
++            </div>
++          </div>
++        </div>
++      </div>
++    </section>
++  );
++};
