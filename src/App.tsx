@@ -5,6 +5,7 @@ import { About } from './components/About';
 import { Footer } from './components/Footer';
 import { Terminal } from './components/Terminal';
 import { Certificates } from './components/Certificates';
+import { CustomCursor } from './components/CustomCursor';
 
 // Lazy load heavy components (Three.js, Video, and ML Weights) to make initial load lightning fast
 const InteractiveSculpture = React.lazy(() => import('./components/InteractiveSculpture').then(module => ({ default: module.InteractiveSculpture })));
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <div className="bg-black min-h-screen text-white selection:bg-white selection:text-black">
+      <CustomCursor />
       <main className="relative">
         <div id="hero">
           <Hero />

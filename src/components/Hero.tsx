@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
   
   return (
     <>
-      <nav className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
+      <nav className="absolute top-12 left-4 md:top-14 md:left-6 z-[10001]">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-4 flex items-center justify-center transition-transform active:scale-95 group cursor-pointer"
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
               initial="hidden"
               animate="visible"
               exit="hidden"
-              className="fixed inset-0 z-40"
+              className="fixed inset-0 z-[10000]"
             >
               {/* Background Overlay */}
               <motion.div
@@ -126,6 +126,35 @@ const CameraRig = () => {
   return null;
 };
 
+const Ticker = () => {
+  return (
+    <div className="absolute top-0 left-0 w-full h-8 bg-black z-40 flex items-center overflow-hidden pointer-events-none">
+      <motion.div
+        className="flex whitespace-nowrap"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+      >
+        <div className="flex items-center text-[#E1E0CC] font-sans font-bold text-[10px] sm:text-xs tracking-[0.2em] uppercase">
+          {[...Array(15)].map((_, i) => (
+            <React.Fragment key={i}>
+              <span className="px-4">pls hire me!!!</span>
+              <span className="px-4 text-[#E1E0CC]/50">•</span>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="flex items-center text-[#E1E0CC] font-sans font-bold text-[10px] sm:text-xs tracking-[0.2em] uppercase">
+          {[...Array(15)].map((_, i) => (
+            <React.Fragment key={`dup-${i}`}>
+              <span className="px-4">pls hire me!!!</span>
+              <span className="px-4 text-[#E1E0CC]/50">•</span>
+            </React.Fragment>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 export const Hero: React.FC = React.memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { margin: "0px 0px 500px 0px" });
@@ -149,10 +178,10 @@ export const Hero: React.FC = React.memo(() => {
 
   return (
     <section ref={containerRef} onPointerMove={handlePointerMove} className="h-screen w-full relative overflow-hidden" style={{ backgroundColor: '#E3E3D5' }}>
-      <CustomCursor />
       
       <div className="w-full h-full relative pointer-events-auto" style={{ backgroundColor: '#E3E3D5' }}>
         
+        <Ticker />
         <Navbar />
 
         {/* HERO TITLE - 3D Parallax Text */}

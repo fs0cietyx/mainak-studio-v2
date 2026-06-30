@@ -38,7 +38,7 @@ const Blob = () => {
 export const Hero3D = () => {
   return (
     <div className="absolute inset-0 w-full h-full z-0 pointer-events-auto">
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 2]}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 1.5]} performance={{ min: 0.5 }} gl={{ powerPreference: "high-performance", antialias: false }}>
         {/* Transparent background so we can blend with hero container if needed */}
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />

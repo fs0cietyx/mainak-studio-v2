@@ -61,6 +61,7 @@ export const CustomCursor = () => {
   const mouse = useRef({ ...initialPos });
   const dot = useRef({ ...initialPos });
   const previousBlob = useRef({ ...initialPos });
+  const previousMouse = useRef({ ...initialPos });
   
   // Interaction State
   const isClicking = useRef(false);
@@ -71,6 +72,42 @@ export const CustomCursor = () => {
   const trailDroplets = useRef<{x: number, y: number, size: number, life: number}[]>([]);
   
   // Smooth size interpolation so it doesn't just blip out of existence
+  
+  // Generate a spherical normal map for the refraction lens
+  const lensDataUrl = React.useMemo(() => {
+    if (typeof document === 'undefined') return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      for (let y = 0; y < 64; y++) {
+        for (let x = 0; x < 64; x++) {
+          const dx = x - 32;
+          const dy = y - 32;
+          const dist = Math.sqrt(dx * dx + dy * dy) / 32;
+          if (dist > 1) {
+             ctx.fillStyle = 'rgba(128, 128, 255, 0)';
+             ctx.fillRect(x, y, 1, 1);
+          } else {
+             const nx = dx / 32;
+             const ny = dy / 32;
+             const r = Math.floor((nx * 0.5 + 0.5) * 255);
+             const g = Math.floor((ny * 0.5 + 0.5) * 255);
+             
+             let a = 255;
+             if (dist > 0.7) {
+                a = Math.floor(((1 - dist) / 0.3) * 255);
+             }
+             ctx.fillStyle = `rgba(${r}, ${g}, 255, ${a / 255})`;
+             ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+    return canvas.toDataURL();
+  }, []);
+
   const currentBlobSize = useRef(0);
 
   useEffect(() => {
@@ -169,9 +206,10 @@ export const CustomCursor = () => {
       // Calculate head movement speed for fluid pull physics
 
       // 3. Calculate Head Velocity for Visibility
-      const vx = targetX - previousBlob.current.x;
-      const vy = targetY - previousBlob.current.y;
+      const vx = mouse.current.x - previousMouse.current.x;
+      const vy = mouse.current.y - previousMouse.current.y;
       const speed = Math.sqrt(vx * vx + vy * vy);
+      previousMouse.current = { ...mouse.current };
 
       // Expand radius based on movement speed (vigorous shaking)
       if (!hoverTarget.current) {
@@ -249,12 +287,19 @@ export const CustomCursor = () => {
         curr.vx += writheX;
         curr.vy += writheY;
         
-        // Apply friction/drag
         curr.vx *= (1 - drag);
         curr.vy *= (1 - drag);
         
-        curr.x += curr.vx;
-        curr.y += curr.vy;
+        if (speed < 0.5) {
+          // Rapidly collapse the tail into a perfect sphere when resting to prevent trailing bumps
+          curr.x += (prev.x - curr.x) * 0.85;
+          curr.y += (prev.y - curr.y) * 0.85;
+          curr.vx = 0;
+          curr.vy = 0;
+        } else {
+          curr.x += curr.vx;
+          curr.y += curr.vy;
+        }
 
         // INELASTIC CONSTRAINT (The Symbiote Web)
         const newDx = prev.x - curr.x;
@@ -294,6 +339,32 @@ export const CustomCursor = () => {
       } else {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         canvasDirty.current = true;
+
+      // Update SVG Lenses
+      for (let i = 0; i < 8; i++) {
+        const lens = document.getElementById(`lens-${i}`);
+        if (lens) {
+          if (currentBlobSize.current < 0.5 && trailDroplets.current.length === 0) {
+            lens.setAttribute('width', '0');
+            lens.setAttribute('height', '0');
+          } else {
+            // Map to the first 8 nodes
+            const nodeIndex = i * 2;
+            const node = nodes.current[nodeIndex];
+            if (node) {
+              const thicknessRatio = 1 - (nodeIndex / nodes.current.length);
+              const sizeMultiplier = currentBlobSize.current * Math.max(0.05, Math.pow(thicknessRatio, 0.7));
+              const lensSize = Math.max(sizeMultiplier * 2.2, 10);
+              
+              lens.setAttribute('x', String(node.x - lensSize / 2));
+              lens.setAttribute('y', String(node.y - lensSize / 2));
+              lens.setAttribute('width', String(lensSize));
+              lens.setAttribute('height', String(lensSize));
+            }
+          }
+        }
+      }
+
       
       // Draw IK Tentacle
       if (currentBlobSize.current > 0.5) {
@@ -345,7 +416,8 @@ export const CustomCursor = () => {
           ctx.beginPath();
           for (let i = trailDroplets.current.length - 1; i >= 0; i--) {
             const drop = trailDroplets.current[i];
-            drop.life -= 0.02; // Faster dissolve for wet trail evaporation
+            // Fast evaporation when moving, extreme evaporation when resting
+            drop.life -= speed < 0.5 ? 0.08 : 0.02; 
             if (drop.life <= 0) {
               trailDroplets.current.splice(i, 1);
             } else {
@@ -388,15 +460,64 @@ export const CustomCursor = () => {
             <feColorMatrix 
               in="blur" 
               mode="matrix" 
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -12" 
+              values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 30 -12" 
               result="goo" 
             />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                                                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
+
+          <filter id="text-refraction-lens" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feImage id="lens-0" href={lensDataUrl} x="0" y="0" width="0" height="0" result="lens0" />
+            <feImage id="lens-1" href={lensDataUrl} x="0" y="0" width="0" height="0" result="lens1" />
+            <feImage id="lens-2" href={lensDataUrl} x="0" y="0" width="0" height="0" result="lens2" />
+            <feImage id="lens-3" href={lensDataUrl} x="0" y="0" width="0" height="0" result="lens3" />
+            <feImage id="lens-4" href={lensDataUrl} x="0" y="0" width="0" height="0" result="lens4" />
+                                                
+            <feComposite in="lens0" in2="lens1" operator="over" result="c1" />
+            <feComposite in="c1" in2="lens2" operator="over" result="c2" />
+            <feComposite in="c2" in2="lens3" operator="over" result="c3" />
+                                                <feComposite in="c3" in2="lens4" operator="over" result="displacement_map" />
+            
+            {/* Generate a neutral background (RGB 128) */}
+            <feFlood floodColor="#808080" result="neutral" />
+            {/* Composite the displacement map over the neutral background */}
+            <feComposite in="displacement_map" in2="neutral" operator="over" result="full_displacement" />
+
+            <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="text_r" />
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="text_g" />
+                        <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="text_b" />
+            
+            <feDisplacementMap in="text_r" in2="full_displacement" scale="12" xChannelSelector="R" yChannelSelector="G" result="refracted_r" />
+            <feDisplacementMap in="text_g" in2="full_displacement" scale="8" xChannelSelector="R" yChannelSelector="G" result="refracted_g" />
+            <feDisplacementMap in="text_b" in2="full_displacement" scale="4" xChannelSelector="R" yChannelSelector="G" result="refracted_b" />
+                                                
+            <feBlend in="refracted_r" in2="refracted_g" mode="screen" result="rg" />
+            <feBlend in="rg" in2="refracted_b" mode="screen" result="rgb" />
+            
+            {/* Alpha mask using the displacement map itself so it STRICTLY only applies where lenses exist */}
+            <feColorMatrix in="displacement_map" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" result="mask_alpha" />
+            <feComposite in="rgb" in2="mask_alpha" operator="in" result="masked_rgb" />
+          </filter>
+
         </defs>
       </svg>
 
-      {/* Layer 3 & 4: The Biological Blob & Tail Canvas */}
+      {/* 
+        Layer 3: Refraction Overlay (Applies to EVERYTHING behind it across the whole site) 
+        This is placed at z-[9997] so any 3D models at z-[9999] will be placed ON TOP of it
+        and thus will NOT be refracted or inverted!
+      */}
+      <div 
+        className="pointer-events-none fixed inset-0 z-[9997]"
+        style={{
+          backdropFilter: 'url(#text-refraction-lens)',
+          WebkitBackdropFilter: 'url(#text-refraction-lens)',
+          willChange: 'backdrop-filter, transform',
+          transform: 'translateZ(0)'
+        }}
+      />
+      
+      {/* Layer 4: The Biological Blob & Tail Canvas (Inversion effect) */}
       <canvas
         id="symbiote-canvas"
         ref={canvasRef}
@@ -405,7 +526,9 @@ export const CustomCursor = () => {
           mixBlendMode: 'difference',
           width: '100vw',
           height: '100vh',
-          filter: 'url(#metaball-goo)'
+          filter: 'url(#metaball-goo)',
+          willChange: 'filter, transform',
+          transform: 'translateZ(0)'
         }}
       />
       
