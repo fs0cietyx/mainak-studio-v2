@@ -177,7 +177,8 @@ export const CustomCursor = () => {
       
       // Respiration: The organism breathes even when perfectly still
       const respiration = Math.sin(time * 0.005) * 6; 
-      let blobTargetSize = 42 + respiration; 
+      // Default resting radius (massive for more liquid volume)
+      let blobTargetSize = 60 + respiration; 
       
       // 2. Buttery Magnetic Hover (State of the Art)
       if (hoverTarget.current) {
@@ -192,15 +193,14 @@ export const CustomCursor = () => {
         targetX = mouse.current.x + distX * 0.45;
         targetY = mouse.current.y + distY * 0.45;
         
-        blobTargetSize = 35 + respiration; 
+        blobTargetSize = 75 + respiration; 
+      } else if (isOver3D.current) {
+        // Subtle contraction when entering 3D space
+        blobTargetSize = 40 + respiration; 
       }
 
       if (isClicking.current) {
         blobTargetSize *= 0.7; // Compress smoothly on click
-      }
-
-      if (isOver3D.current) {
-        blobTargetSize = 0;
       }
 
       // Calculate head movement speed for fluid pull physics
@@ -240,10 +240,10 @@ export const CustomCursor = () => {
       dot.current.y += (targetY + eyeTwitchY - dot.current.y) * 0.25;
 
       // 5. UPDATE INVERSE KINEMATICS (IK) CHAIN
-      // Initialize nodes array if empty
-      if (nodes.current.length < 80) {
+      // A small number of nodes (15) creates a cohesive fluid drop instead of a long snake tail
+      if (nodes.current.length < 15) {
         nodes.current = [];
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 15; i++) {
            nodes.current.push(new BiologicalNode(targetX, targetY, 0, 0, 0));
         }
       }
@@ -273,29 +273,32 @@ export const CustomCursor = () => {
         const dx = prev.x - curr.x;
         const dy = prev.y - curr.y;
         
-        // Lower drag for wilder whip mechanics (0.2 to 0.5)
-        const drag = 0.2 + (i / nodes.current.length) * 0.3; 
+        // Extreme drag for thick, viscous fluid (no bouncing)
+        const drag = 0.7 + (i / nodes.current.length) * 0.2; 
         
-        // Spring pulling toward the node in front
-        curr.vx += (prev.x - curr.x) * 0.5;
-        curr.vy += (prev.y - curr.y) * 0.5;
+        // Very weak spring so it oozes instead of snapping back like a rubber band
+        curr.vx += (prev.x - curr.x) * 0.08;
+        curr.vy += (prev.y - curr.y) * 0.08;
         
         // ORGANIC WRITHE: The symbiote "breathes" or "spasms" rhythmically
         const spasm = Math.pow(Math.sin(currentTime * 1.5 - i * 0.05), 8); // Deep pulses that travel down the tail
         const writheX = Math.sin(currentTime * 2 + i * 0.3) * (0.8 + spasm * 3.5);
         const writheY = Math.cos(currentTime * 1.8 + i * 0.3) * (0.8 + spasm * 3.5);
-        curr.vx += writheX;
-        curr.vy += writheY;
+        curr.vx += writheX * 0.5; // Dampened writhe so it doesn't shake wildly
+        curr.vy += writheY * 0.5;
         
         curr.vx *= (1 - drag);
         curr.vy *= (1 - drag);
         
         if (speed < 0.5) {
-          // Rapidly collapse the tail into a perfect sphere when resting to prevent trailing bumps
-          curr.x += (prev.x - curr.x) * 0.85;
-          curr.y += (prev.y - curr.y) * 0.85;
-          curr.vx = 0;
-          curr.vy = 0;
+          // Slow, oozing collapse when resting (0.05) instead of violent snapping (0.85)
+          curr.x += (prev.x - curr.x) * 0.08;
+          curr.y += (prev.y - curr.y) * 0.08;
+          // Keep a tiny bit of momentum so it settles naturally
+          curr.vx *= 0.8;
+          curr.vy *= 0.8;
+          curr.x += curr.vx;
+          curr.y += curr.vy;
         } else {
           curr.x += curr.vx;
           curr.y += curr.vy;
@@ -305,7 +308,7 @@ export const CustomCursor = () => {
         const newDx = prev.x - curr.x;
         const newDy = prev.y - curr.y;
         const newDist = Math.sqrt(newDx * newDx + newDy * newDy) || 1;
-        const maxStretch = 3.5; // Tighter constraint for denser fluid
+        const maxStretch = 4.5; // Allow it to stretch more to feel like a larger volume of fluid
         if (newDist > maxStretch) {
            curr.x = prev.x - (newDx / newDist) * maxStretch;
            curr.y = prev.y - (newDy / newDist) * maxStretch;
@@ -378,8 +381,9 @@ export const CustomCursor = () => {
           const curr = nodes.current[i];
           const next = nodes.current[i + 1];
           const thicknessRatio = 1 - (i / nodes.current.length);
-          // Exponent 0.7 creates a sharper, teardrop/snail-like taper
-          const size = currentBlobSize.current * Math.max(0.05, Math.pow(thicknessRatio, 0.7));
+          // High minimum thickness (0.8) and very subtle taper (0.1 exponent) 
+          // to maintain massive liquid volume throughout the shape
+          const size = currentBlobSize.current * Math.max(0.8, Math.pow(thicknessRatio, 0.1));
           
           ctx.beginPath();
           ctx.moveTo(curr.x, curr.y);
@@ -391,23 +395,21 @@ export const CustomCursor = () => {
         if (isOver3D.current) {
           trailDroplets.current = [];
         } else {
-          // Spawn slimy trail droplets left behind when dragging
-          if (speed > 1.5) { // Spawn more often (lower speed threshold)
-             const numDroplets = Math.floor(speed / 4) + 1;
-             for (let j = 0; j < Math.min(numDroplets, 3); j++) {
-               if (Math.random() > 0.4) {
-                 // Mostly spawn from the end of the tail for a true continuous trail
-                 const spawnIndex = nodes.current.length - 1 - Math.floor(Math.random() * 8);
-                 const spawnNode = nodes.current[spawnIndex];
-                 if (spawnNode) {
-                   trailDroplets.current.push({
-                     x: spawnNode.x + (Math.random() - 0.5) * 6,
-                     y: spawnNode.y + (Math.random() - 0.5) * 6,
-                     // Tiny wet droplets
-                     size: currentBlobSize.current * (0.08 + Math.random() * 0.15),
-                     life: 1.0
-                   });
-                 }
+          // Spawn thick viscous trail droplets left behind when dragging
+          if (speed > 0.5) { 
+             const numDroplets = Math.floor(speed / 3) + 4;
+             for (let j = 0; j < Math.min(numDroplets, 12); j++) {
+               // Spawn from the back half of the fluid capsule
+               const spawnIndex = nodes.current.length - 1 - Math.floor(Math.random() * 5);
+               const spawnNode = nodes.current[spawnIndex];
+               if (spawnNode) {
+                 trailDroplets.current.push({
+                   x: spawnNode.x + (Math.random() - 0.5) * 12,
+                   y: spawnNode.y + (Math.random() - 0.5) * 12,
+                   // Massive droplets (60% to 110% of blob size) for insane fluid volume
+                   size: currentBlobSize.current * (0.8 + Math.random() * 0.7),
+                   life: 1.0
+                 });
                }
              }
           }
@@ -416,8 +418,8 @@ export const CustomCursor = () => {
           ctx.beginPath();
           for (let i = trailDroplets.current.length - 1; i >= 0; i--) {
             const drop = trailDroplets.current[i];
-            // Fast evaporation when moving, extreme evaporation when resting
-            drop.life -= speed < 0.5 ? 0.08 : 0.02; 
+            // Extremely slow evaporation to leave massive lingering pools of fluid
+            drop.life -= speed < 0.5 ? 0.02 : 0.008;
             if (drop.life <= 0) {
               trailDroplets.current.splice(i, 1);
             } else {

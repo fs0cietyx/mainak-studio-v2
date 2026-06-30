@@ -7,9 +7,8 @@ import { Terminal } from './components/Terminal';
 import { Certificates } from './components/Certificates';
 import { CustomCursor } from './components/CustomCursor';
 
-// Lazy load heavy components (Three.js, Video, and ML Weights) to make initial load lightning fast
 const InteractiveSculpture = React.lazy(() => import('./components/InteractiveSculpture').then(module => ({ default: module.InteractiveSculpture })));
-const ScrollVideoTransition = React.lazy(() => import('./components/ScrollVideoTransition').then(module => ({ default: module.ScrollVideoTransition })));
+const ResumeParallax = React.lazy(() => import('./components/ResumeParallax').then(module => ({ default: module.ResumeParallax })));
 const MLLab = React.lazy(() => import('./components/MLLab').then(module => ({ default: module.MLLab })));
 
 function App() {
@@ -43,7 +42,7 @@ function App() {
         
         {/* Suspense boundaries prevent these heavy components from blocking the main thread */}
         <Suspense fallback={<div className="h-screen w-full bg-black" />}>
-          <ScrollVideoTransition />
+          <ResumeParallax />
         </Suspense>
         
         <Suspense fallback={<div className="h-screen w-full bg-black flex items-center justify-center"><span className="text-white/20 font-mono text-sm tracking-widest">LOADING ARTIFACTS...</span></div>}>
