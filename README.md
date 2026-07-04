@@ -1,119 +1,162 @@
-# 🖥️ Mainak Biswas: Creative Technologist & AI Engineer
+# 🖥️ Mainak Studio v2
 
-[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF.svg)](https://vitejs.dev/)
-[![React](https://img.shields.io/badge/React-18.0-61DAFB.svg)](https://reactjs.org/)
-[![Framer Motion](https://img.shields.io/badge/Motion-Framer-FF0055.svg)](https://www.framer.com/motion/)
-[![Three.js](https://img.shields.io/badge/Three.js-WebGL-000000.svg)](https://threejs.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC.svg)](https://tailwindcss.com/)
-
-> **A highly optimized, cinematic digital portfolio engineered to push the limits of browser performance. Featuring custom WebGL shaders, pure JavaScript Neural Networks, and GPU-accelerated scroll physics.**
-
----
+An absurdly optimized, cinematic digital portfolio engineered to push the limits of browser performance. It features custom WebGL shaders, pure JavaScript Neural Networks, GPU-accelerated scroll physics, and a fully interactive simulated OS terminal.
 
 ## ✨ Visual Experience
 
 ![Hero Section](public/snapshots/hero_new.png)
-*Figure 1: The new minimalist, high-end hero section featuring cinematic scroll physics.*
+*The high-end hero section featuring cinematic scroll physics and dynamic lighting.*
 
 <p align="center">
-  <img src="public/snapshots/mllab_new.png" width="45%" alt="MNIST Sandbox" />
-  <img src="public/snapshots/sculpture_new.png" width="45%" alt="Interactive Sculpture" />
+  <img src="public/snapshots/mllab_new.png" width="32%" alt="MNIST Sandbox" />
+  <img src="public/snapshots/sculpture_new.png" width="32%" alt="Interactive Sculpture" />
+  <img src="public/snapshots/terminal.png" width="32%" alt="Simulated Terminal" />
 </p>
 <p align="center">
-  <em>Figure 2: Left: The native JS ML Sandbox. Right: The massive 3D Interactive Sculpture.</em>
+  <em>Left: Native JS ML Sandbox. Center: 3D Interactive Sculpture. Right: Integrated Mainak OS Terminal.</em>
 </p>
 
----
+## Key Features
 
-## 🌟 Overview
-
-This platform serves as the digital identity for **Mainak Biswas**, a Creative Technologist and AI/ML Engineer. It is not a standard web page; it is a meticulously engineered interactive experience designed to demonstrate expertise in bleeding-edge web technologies, real-time 3D rendering, and applied machine learning.
-
----
-
-## 🚀 Key Engineering Milestones
-
-### 🧠 Native JS Convolutional Neural Network (MNIST Sandbox)
-Built a completely custom **TinyCNN inference engine** from scratch in vanilla JavaScript.
-- **No TFJS Dependency:** Bypasses heavy WebAssembly payloads, dropping bundle size by megabytes.
-- **O(N) Optimization:** Manual convolutional math loops process the 28x28 canvas input in `< 1ms`.
-- **Bounding-Box Centering:** Raw pixel analysis automatically centers user drawings before feeding them through the CNN weights for drastically improved accuracy.
-
-### 🎥 Cinematic Scroll Physics
-- **Lenis Engine:** Hijacked native scroll events and routed them through a unified `requestAnimationFrame` loop with a highly tuned `lerp: 0.05`.
-- **Hardware Acceleration:** Aggressive use of `will-change: transform, opacity` and `translateZ(0)` forces the browser to offload heavy typography animations to dedicated GPU VRAM.
-- **Zero-Waterfall Preloading:** Massive video assets and 3D STL models are aggressively preloaded in the `index.html` header, ensuring instant time-to-interact.
-
-### 🧊 High-Performance WebGL (Interactive Sculpture)
-- **Zero-Alpha Compositing:** Disabled DOM alpha blending (`alpha: false`) within the WebGL canvas. By preventing the browser from computing transparency against the background DOM, rendering performance skyrocketed by ~30%.
-- **DPR Clamping:** Hard-capped Device Pixel Ratio scaling on Retina displays to guarantee 60-120 FPS during 3D camera pan movements.
+- **Cinematic Scroll Engine**: Hijacks native scroll events using Lenis, routed through a unified `requestAnimationFrame` loop with tuned linear interpolation.
+- **Hardware Acceleration**: Aggressive use of `will-change` and `translateZ(0)` offloads heavy typography animations to dedicated GPU VRAM.
+- **Zero-Waterfall Preloading**: Lazy loading code-splits the heavy Three.js logic to guarantee instant time-to-interact.
+- **Native JS Convolutional Neural Network**: A completely custom TinyCNN inference engine built from scratch in vanilla JavaScript (no TFJS dependency) that processes canvas input in `< 1ms`.
+- **Integrated Terminal**: Fully functional simulated terminal (`Mainak OS`) hidden in the UI for developers to explore the ecosystem.
 
 ---
 
-## 🛠️ Project Showcases
+## Tech Stack
 
-### [CytoGraph ML](https://github.com/fs0cietyx/CytoGraph-ML)
-* **Category:** AI / Machine Learning
-* **Focus:** Advanced graph neural networks applied to cellular structures.
-
-### [Maze Crawler: Strategic AI Agent](https://github.com/fs0cietyx/maze-crawler)
-* **Category:** Algorithms / Pathfinding
-* **Focus:** Implements optimized A* pathfinding and real-time collision avoidance matrices.
-
-### [AI Slop Detector](https://github.com/fs0cietyx/ai-slop-detector)
-* **Category:** AI Governance / NLP
-* **Focus:** High-efficiency text classification for detecting synthetically generated generic content.
+- **Language**: TypeScript
+- **Framework**: React 19
+- **Build Tool**: Vite 6
+- **3D Engine**: Three.js / React Three Fiber / Drei
+- **Animations**: Framer Motion & Lenis
+- **Styling**: Tailwind CSS
+- **Deployment**: Netlify
 
 ---
 
-## 🏗️ System Architecture
+## Prerequisites
 
-```mermaid
-graph TD
-    A[User Entry] --> B[Zero-Waterfall Preloader]
-    B --> C{Cinematic Scroll Engine}
-    subgraph "Hardware Accelerated Layers"
-    C --> D[Scroll-linked Video Scrubber]
-    C --> E[WebGL Interactive Sculpture]
-    C --> F[Native JS ML Sandbox]
-    end
-    D --> G[GPU Compositing]
-    E --> G
-    F --> H[Sub-millisecond Tensor Math]
-    G --> I[120 FPS Fluid Experience]
-    H --> I
-```
+- Node.js 20 or higher
+- npm (default package manager)
 
 ---
 
-## 🚀 Installation & Deployment
+## Getting Started
 
-### 1. Local Setup
+### 1. Clone the Repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/fs0cietyx/mainak-studio-v2.git
 cd mainak-studio-v2
+```
 
-# Install dependencies
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Development & Build
-```bash
-# Start local development server on port 3000
-npm run dev -- --port 3000
+### 3. Start Development Server
 
-# Build for production
-npm run build
+```bash
+npm run dev -- --port 3000
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Architecture
+
+### Directory Structure
+
+```text
+├── public/                 # Static assets (3D models, fonts, images, videos)
+│   ├── case-studies/       # App case study media
+│   └── snapshots/          # Documentation screenshots
+├── ml-research/            # Python scripts for training Neural Networks
+│   ├── train_cnn.py
+│   └── train_mnist.py
+├── src/
+│   ├── components/         # Reusable React components (Hero, Terminal, MLLab)
+│   ├── utils/              # Helper functions (security.ts for PII masking)
+│   ├── App.tsx             # Main entry point & routing
+│   └── main.tsx            # DOM initialization
+├── netlify.toml            # Netlify deployment and CSP headers configuration
+└── vite.config.ts          # Vite build configuration & chunk splitting
 ```
 
-### 3. Neural Network Retraining
+### Strategic Frontend Protocol: Maintenance Gateway
+
+This application is hardened under a strict maintenance protocol to ensure it remains a high-performance, zero-trust web asset.
+
+1. **Cinematic Performance Mandate**
+   - **Framer Motion Precision:** Every interaction must be fluid. All `drag` constraints must be pixel-perfect.
+   - **Zero Layout Shift:** Use absolute positioning and pre-calculated aspect ratios for all hero assets.
+   - **Image Optimization:** All background gradients and placeholders must be CSS-generated or WebP-optimized.
+
+2. **Zero-Trust Security Mandate**
+   - **No Hardcoded PII:** Contact information (Email/Phone) must never exist as plain text in the source.
+   - **Base64 Masking:** Use the `security.ts` utility to decode identifiers only at runtime.
+   - **Env Consistency:** Any new `VITE_` variable must be mirrored in the Netlify dashboard immediately.
+
+3. **Deployment Protocol**
+   - **Build Isolation:** Do not modify the `dist` folder directly. All changes must originate from the `src` layer.
+   - **CI/CD Integration:** Merges to `main` must pass the local build check (`npm run build`) to ensure Netlify stability.
+
+---
+
+## Environment Variables
+
+This project uses environment variables to adhere to the Zero-Trust Security mandate. 
+
+| Variable | Description |
+| -------- | ----------- |
+| `VITE_CONTACT_EMAIL` | Base64 encoded email address (decoded at runtime) |
+| `VITE_CONTACT_PHONE` | Base64 encoded phone number (decoded at runtime) |
+
+---
+
+## Available Scripts
+
+| Command | Description |
+| ------- | ----------- |
+| `npm run dev` | Start development server |
+| `npm run build` | Compile TypeScript and build for production |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint to check for code quality |
+
+### Neural Network Retraining
+
 If you wish to retrain the CNN weights used in the sandbox:
 ```bash
 # Requires Python 3.10+ and PyTorch
+cd ml-research
 python train_cnn.py
 ```
 This script will output a highly optimized `cnn_weights.json` file.
+
+---
+
+## Deployment
+
+This project is configured to auto-deploy to **Netlify** via `netlify.toml`.
+
+### Automated Deployment (Recommended)
+1. Push your changes to the `main` branch.
+2. Netlify will automatically trigger a build using Node 20.
+3. The build command `npm run build` is executed.
+4. The `/dist` directory is published.
+
+### Manual Local Build Check
+Before pushing to production, always verify the build succeeds without chunk size limits breaking the 3D engine:
+```bash
+npm run build
+```
+*Note: We utilize custom Rollup manualChunks in `vite.config.ts` to cleanly separate Three.js from React Fiber logic, ensuring chunk sizes remain within optimized browser limits.*
 
 ---
 
