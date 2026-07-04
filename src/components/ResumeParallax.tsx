@@ -2,10 +2,12 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue, useSpring } from 'framer-motion';
 import Floating, { FloatingElement } from './fancy/image/parallax-floating';
 
-// 16 images from the extracted zip
-const caseStudyImages = Array.from({ length: 16 }, (_, i) => 
-  `/case-studies/draft7_page-${String(i + 1).padStart(4, '0')}.jpg`
-);
+// 16 images from the extracted zip, using Vite's glob to ensure proper asset hashing and Netlify CDN delivery
+const imageModules = import.meta.glob('/public/case-studies/*.jpg', { eager: true, query: '?url', import: 'default' });
+const caseStudyImages = Array.from({ length: 16 }, (_, i) => {
+  const path = `/public/case-studies/draft7_page-${String(i + 1).padStart(4, '0')}.jpg`;
+  return (imageModules[path] as string) || `/case-studies/draft7_page-${String(i + 1).padStart(4, '0')}.jpg`;
+});
 
 // Predefined positions and depths to spread them widely across the screen
 const imageConfig = [
