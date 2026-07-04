@@ -1,49 +1,43 @@
-# 🖥️ Mainak Studio v2
+# Mainak Studio v2
 
-An absurdly optimized, cinematic digital portfolio engineered to push the limits of browser performance. It features custom WebGL shaders, pure JavaScript Neural Networks, GPU-accelerated scroll physics, and a fully interactive simulated OS terminal.
+A highly optimized digital portfolio engineered to demonstrate advanced browser performance, zero-waterfall architecture, and complex 3D rendering. The application features custom WebGL shaders, a native JavaScript Convolutional Neural Network (CNN), GPU-accelerated scroll physics, and an interactive simulated terminal environment.
 
-## ✨ Visual Experience
+## Architecture & Visual Overview
 
 <p align="center">
-  <img src="public/snapshots/showcase_1.png" width="49%" alt="Interactive Component 1" />
-  <img src="public/snapshots/showcase_2.png" width="49%" alt="Interactive Component 2" />
+  <img src="public/snapshots/showcase_2.png" width="49%" alt="Interactive Component" />
+  <img src="public/snapshots/showcase_3.png" width="49%" alt="Data Visualization" />
 </p>
 <p align="center">
   <img src="public/snapshots/showcase_4.png" width="49%" alt="Terminal UI" />
-  <img src="public/snapshots/showcase_5.png" width="49%" alt="Sculpture UI" />
+  <img src="public/snapshots/showcase_5.png" width="49%" alt="Interactive Sculpture" />
 </p>
 <p align="center">
-  <em>An absurdly optimized, cinematic digital portfolio engineered to push the limits of browser performance.</em>
+  <em>Core interfaces demonstrating 3D rendering, machine learning inference, and terminal emulation.</em>
 </p>
-
-## Key Features
-
-- **Cinematic Scroll Engine**: Hijacks native scroll events using Lenis, routed through a unified `requestAnimationFrame` loop with tuned linear interpolation.
-- **Hardware Acceleration**: Aggressive use of `will-change` and `translateZ(0)` offloads heavy typography animations to dedicated GPU VRAM.
-- **Zero-Waterfall Preloading**: Lazy loading code-splits the heavy Three.js logic to guarantee instant time-to-interact.
-- **Native JS Convolutional Neural Network**: A completely custom TinyCNN inference engine built from scratch in vanilla JavaScript (no TFJS dependency) that processes canvas input in `< 1ms`.
-- **Integrated Terminal**: Fully functional simulated terminal (`Mainak OS`) hidden in the UI for developers to explore the ecosystem.
-
----
 
 ## Tech Stack
 
 - **Language**: TypeScript
 - **Framework**: React 19
-- **Build Tool**: Vite 6
+- **Build System**: Vite 6
 - **3D Engine**: Three.js / React Three Fiber / Drei
-- **Animations**: Framer Motion & Lenis
+- **Animation & Physics**: Framer Motion, Lenis (Scroll hijacking)
 - **Styling**: Tailwind CSS
 - **Deployment**: Netlify
 
----
+## Key Technical Implementations
+
+- **Cinematic Scroll Engine**: Native scroll events are intercepted via Lenis and routed through a unified `requestAnimationFrame` loop. This enables precise linear interpolation and consistent scrolling velocity regardless of input device.
+- **Hardware Acceleration**: Heavy typography and DOM elements utilize `will-change: transform` and `translate3d` to offload rendering to dedicated GPU VRAM, ensuring 60fps performance during complex 3D transitions.
+- **Zero-Waterfall Preloading**: Core Three.js logic and heavy assets are dynamically imported via `React.lazy` and `Suspense` boundaries, guaranteeing an instant initial page load (Time to Interactive).
+- **Native JavaScript CNN**: A proprietary TinyCNN inference engine built from scratch in vanilla JavaScript. It processes raw HTML5 Canvas matrix inputs in `< 1ms` without relying on external libraries like TensorFlow.js.
+- **Vite Glob Imports**: Static assets (such as the 45MB case study image directory) are processed at build-time using `import.meta.glob`. This guarantees cryptographic hashing and prevents CDN 404 cache misses in production environments like Netlify.
 
 ## Prerequisites
 
-- Node.js 20 or higher
-- npm (default package manager)
-
----
+- Node.js 20.x or higher
+- npm
 
 ## Getting Started
 
@@ -60,107 +54,71 @@ cd mainak-studio-v2
 npm install
 ```
 
-### 3. Start Development Server
+### 3. Local Development
 
 ```bash
 npm run dev -- --port 3000
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Navigate to `http://localhost:3000` to view the application.
 
----
-
-## Architecture
-
-### Directory Structure
+## Directory Structure
 
 ```text
-├── public/                 # Static assets (3D models, fonts, images, videos)
-│   ├── case-studies/       # App case study media
-│   └── snapshots/          # Documentation screenshots
+├── public/                 # Static assets (3D models, fonts, images)
+│   ├── case-studies/       # Image directory for the parallax grid
+│   └── snapshots/          # Documentation assets
 ├── ml-research/            # Python scripts for training Neural Networks
 │   ├── train_cnn.py
 │   └── train_mnist.py
 ├── src/
-│   ├── components/         # Reusable React components (Hero, Terminal, MLLab)
-│   ├── utils/              # Helper functions (security.ts for PII masking)
-│   ├── App.tsx             # Main entry point & routing
-│   └── main.tsx            # DOM initialization
-├── netlify.toml            # Netlify deployment and CSP headers configuration
-└── vite.config.ts          # Vite build configuration & chunk splitting
+│   ├── components/         # React components (Hero, Terminal, MLLab)
+│   ├── utils/              # Helper functions (e.g., security.ts for PII)
+│   ├── App.tsx             # Application routing and initialization
+│   └── main.tsx            # DOM mounting
+├── netlify.toml            # Deployment and CSP headers configuration
+└── vite.config.ts          # Build configuration and chunk splitting logic
 ```
 
-### Strategic Frontend Protocol: Maintenance Gateway
+## Security & Maintenance Protocol
 
-This application is hardened under a strict maintenance protocol to ensure it remains a high-performance, zero-trust web asset.
+To maintain zero-trust security and maximum performance, the following constraints are enforced:
 
-1. **Cinematic Performance Mandate**
-   - **Framer Motion Precision:** Every interaction must be fluid. All `drag` constraints must be pixel-perfect.
-   - **Zero Layout Shift:** Use absolute positioning and pre-calculated aspect ratios for all hero assets.
-   - **Image Optimization:** All background gradients and placeholders must be CSS-generated or WebP-optimized.
-
-2. **Zero-Trust Security Mandate**
-   - **No Hardcoded PII:** Contact information (Email/Phone) must never exist as plain text in the source.
-   - **Base64 Masking:** Use the `security.ts` utility to decode identifiers only at runtime.
-   - **Env Consistency:** Any new `VITE_` variable must be mirrored in the Netlify dashboard immediately.
-
-3. **Deployment Protocol**
-   - **Build Isolation:** Do not modify the `dist` folder directly. All changes must originate from the `src` layer.
-   - **CI/CD Integration:** Merges to `main` must pass the local build check (`npm run build`) to ensure Netlify stability.
-
----
+1. **Zero-Trust Data Protection**: Personally Identifiable Information (PII) such as email addresses and phone numbers must never exist in plain text. They are stored as Base64 encoded environment variables and decoded at runtime via `src/utils/security.ts`.
+2. **Build Optimization**: The `vite.config.ts` utilizes custom Rollup `manualChunks` to isolate `@react-three` and `three` from the core application logic. This circumvents 500kb chunk limits and guarantees optimal caching.
+3. **Deployment Consistency**: All merges to `main` must pass the local `npm run build` process to ensure the asset pipeline remains intact before Netlify triggers the CI/CD pipeline.
 
 ## Environment Variables
 
-This project uses environment variables to adhere to the Zero-Trust Security mandate. 
-
 | Variable | Description |
 | -------- | ----------- |
-| `VITE_CONTACT_EMAIL` | Base64 encoded email address (decoded at runtime) |
-| `VITE_CONTACT_PHONE` | Base64 encoded phone number (decoded at runtime) |
-
----
+| `VITE_CONTACT_EMAIL` | Base64 encoded email address |
+| `VITE_CONTACT_PHONE` | Base64 encoded phone number |
 
 ## Available Scripts
 
 | Command | Description |
 | ------- | ----------- |
-| `npm run dev` | Start development server |
-| `npm run build` | Compile TypeScript and build for production |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | Run ESLint to check for code quality |
+| `npm run dev` | Initialize the local development server |
+| `npm run build` | Execute TypeScript compiler and generate optimized production bundle |
+| `npm run preview` | Serve the `/dist` directory locally to emulate production |
+| `npm run lint` | Execute ESLint for static code analysis |
 
-### Neural Network Retraining
+## Neural Network Model Retraining
 
-If you wish to retrain the CNN weights used in the sandbox:
+The machine learning weights utilized by the JavaScript inference engine can be retrained. This requires Python 3.10+ and PyTorch.
+
 ```bash
-# Requires Python 3.10+ and PyTorch
 cd ml-research
 python train_cnn.py
 ```
-This script will output a highly optimized `cnn_weights.json` file.
-
----
+This script generates an optimized `cnn_weights.json` file which should be copied into the application logic.
 
 ## Deployment
 
-This project is configured to auto-deploy to **Netlify** via `netlify.toml`.
+The repository is configured for automated deployment via Netlify. The pipeline utilizes the configuration defined in `netlify.toml`.
 
-### Automated Deployment (Recommended)
-1. Push your changes to the `main` branch.
-2. Netlify will automatically trigger a build using Node 20.
-3. The build command `npm run build` is executed.
-4. The `/dist` directory is published.
-
-### Manual Local Build Check
-Before pushing to production, always verify the build succeeds without chunk size limits breaking the 3D engine:
-```bash
-npm run build
-```
-*Note: We utilize custom Rollup manualChunks in `vite.config.ts` to cleanly separate Three.js from React Fiber logic, ensuring chunk sizes remain within optimized browser limits.*
-
----
-
-<p align="center">
-  <i>"It works on my machine"</i><br>
-  <b>© 2026 Mainak Biswas</b>
-</p>
+### Automated Pipeline
+1. Push commits to the `main` branch.
+2. Netlify provisions a Node 20 environment.
+3. The `npm run build` command is executed.
+4. The generated `dist` directory is published and distributed across the edge network.
