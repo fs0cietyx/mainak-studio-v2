@@ -4,16 +4,19 @@ An absurdly optimized, cinematic digital portfolio engineered to push the limits
 
 ## ✨ Visual Experience
 
-![Hero Section](public/snapshots/hero_new.png)
+![Main Experience](public/snapshots/showcase_3.png)
 *The high-end hero section featuring cinematic scroll physics and dynamic lighting.*
 
 <p align="center">
-  <img src="public/snapshots/mllab_new.png" width="32%" alt="MNIST Sandbox" />
-  <img src="public/snapshots/sculpture_new.png" width="32%" alt="Interactive Sculpture" />
-  <img src="public/snapshots/terminal.png" width="32%" alt="Simulated Terminal" />
+  <img src="public/snapshots/showcase_1.png" width="49%" alt="Interactive Component 1" />
+  <img src="public/snapshots/showcase_2.png" width="49%" alt="Interactive Component 2" />
 </p>
 <p align="center">
-  <em>Left: Native JS ML Sandbox. Center: 3D Interactive Sculpture. Right: Integrated Mainak OS Terminal.</em>
+  <img src="public/snapshots/showcase_4.png" width="49%" alt="Terminal UI" />
+  <img src="public/snapshots/showcase_5.png" width="49%" alt="Sculpture UI" />
+</p>
+<p align="center">
+  <em>An absurdly optimized, cinematic digital portfolio engineered to push the limits of browser performance.</em>
 </p>
 
 ## Key Features
