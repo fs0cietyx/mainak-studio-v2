@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { Terminal } from './components/Terminal';
 import { Certificates } from './components/Certificates';
 import { CustomCursor } from './components/CustomCursor';
+import { Loader } from '@react-three/drei';
 
 const InteractiveSculpture = React.lazy(() => import('./components/InteractiveSculpture').then(module => ({ default: module.InteractiveSculpture })));
 const ResumeParallax = React.lazy(() => import('./components/ResumeParallax').then(module => ({ default: module.ResumeParallax })));
@@ -62,6 +63,12 @@ function App() {
         </div>
         <Terminal />
       </main>
+      <Loader 
+        containerStyles={{ background: 'black' }}
+        innerStyles={{ width: '300px' }}
+        barStyles={{ background: '#E1E0CC', height: '2px' }}
+        dataInterpolation={(p) => `LOADING 3D ASSETS: ${p.toFixed(0)}%`}
+      />
     </div>
   );
 }
