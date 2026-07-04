@@ -4,9 +4,6 @@ An absurdly optimized, cinematic digital portfolio engineered to push the limits
 
 ## ✨ Visual Experience
 
-![Main Experience](public/snapshots/showcase_3.png)
-*The high-end hero section featuring cinematic scroll physics and dynamic lighting.*
-
 <p align="center">
   <img src="public/snapshots/showcase_1.png" width="49%" alt="Interactive Component 1" />
   <img src="public/snapshots/showcase_2.png" width="49%" alt="Interactive Component 2" />
