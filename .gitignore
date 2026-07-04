@@ -93,3 +93,9 @@ dist-ssr/
 
 # Netlify
 .netlify
+
+# Media & Logs
+*.mp4
+*.cjs
+*.txt
+
